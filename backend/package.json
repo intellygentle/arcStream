@@ -5,7 +5,7 @@
   "main": "api/index.ts",
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc --skipLibCheck",
     "start": "node dist/index.js",
     "vercel-build": "prisma generate && tsc",
     "test": "echo No tests",
