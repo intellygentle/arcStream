@@ -1,7 +1,7 @@
 // frontend/src/app/upload/page.tsx
 
 'use client';
-
+import { put } from '@vercel/blob';
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useWallet } from '@/components/WalletAuth';
 import { videoAPI } from '@/lib/api';
@@ -45,6 +45,22 @@ export default function UploadPage() {
       processFile(file);
     }
   };
+
+
+  const uploadDirectToBlob = async (file: File): Promise<string> => {
+  // 1. Get upload token from backend
+  const tokenRes = await videoAPI.getUploadToken(file.name, file.type, eoaAddress!);
+  const { token, path, contentType } = tokenRes.data.data;
+
+  // 2. Upload directly to Vercel Blob (bypasses Render!)
+  const blob = await put(path, file, {
+    access: 'public',
+    contentType,
+    token,
+  });
+
+  return blob.url;
+};
 
   const processFile = (file: File) => {
     // Check file size (5GB limit with Vercel Blob)
@@ -96,52 +112,54 @@ export default function UploadPage() {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  
+  if (!eoaAddress || !dcwAddress) {
+    toast.error('Connect wallet first');
+    return;
+  }
+  
+  if (!videoFile) {
+    toast.error('Please select a video file to upload');
+    return;
+  }
+
+  setSubmitting(true);
+  const sizeMB = (videoFile.size / (1024 * 1024)).toFixed(2);
+  const loadingToast = toast.loading(`Uploading directly to Vercel Blob (${sizeMB} MB)...`);
+
+  try {
+    // ✅ Upload directly from browser to Vercel Blob
+    const videoUrl = await uploadDirectToBlob(videoFile);
     
-    if (!eoaAddress || !dcwAddress) {
-      toast.error('Connect wallet first');
-      return;
-    }
+    toast.dismiss(loadingToast);
+    toast.success('✅ Upload complete! Creating video...');
     
-    if (!videoFile) {
-      toast.error('Please select a video file to upload');
-      return;
-    }
-
-    if (!form.durationSeconds || parseInt(form.durationSeconds) < 1) {
-      toast.error('Please enter a valid video duration');
-      return;
-    }
-
-    setSubmitting(true);
-    const sizeMB = (videoFile.size / (1024 * 1024)).toFixed(2);
-    const loadingToast = toast.loading(`Uploading to Vercel Blob (${sizeMB} MB)...`);
-
-    try {
-      // Create FormData with the actual file
-      const formData = new FormData();
-      formData.append('video', videoFile);
-      formData.append('title', form.title);
-      formData.append('description', form.description);
-      formData.append('durationSeconds', form.durationSeconds);
-      formData.append('chunkUnit', form.chunkUnit);
-      formData.append('chunkValue', form.chunkValue);
-      formData.append('pricePerChunk', form.pricePerChunk);
-
-      const res = await videoAPI.create(formData, eoaAddress);
-      
-      toast.dismiss(loadingToast);
-      toast.success('✅ Video published successfully!');
-      router.push(`/watch/${res.data.data.id}`);
-    } catch (err: any) {
-      toast.dismiss(loadingToast);
-      console.error('Upload error:', err);
-      toast.error(err.response?.data?.error || 'Failed to publish video');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    // Create video record
+    const createToast = toast.loading('Saving video...');
+    const res = await videoAPI.confirmUpload({
+      videoUrl,
+      title: form.title,
+      description: form.description,
+      durationSeconds: form.durationSeconds,
+      chunkUnit: form.chunkUnit,
+      chunkValue: form.chunkValue,
+      pricePerChunk: form.pricePerChunk,
+    }, eoaAddress);
+    
+    toast.dismiss(createToast);
+    toast.success('✅ Video published successfully!');
+    router.push(`/watch/${res.data.data.id}`);
+    
+  } catch (err: any) {
+    toast.dismiss(loadingToast);
+    console.error('Upload error:', err);
+    toast.error(err.response?.data?.error || 'Failed to publish video');
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

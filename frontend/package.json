@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@circle-fin/developer-controlled-wallets": "^10.3.0",
+    "@vercel/blob": "^2.3.3",
     "@x402/core": "^2.10.0",
     "@x402/evm": "^2.10.0",
     "autoprefixer": "^10.5.0",

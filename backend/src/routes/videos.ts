@@ -53,6 +53,89 @@ const getAuthenticatedUser = (req: Request) => {
 
 // --- ROUTES ---
 
+// backend/src/routes/videos.ts
+
+// Generate upload token for direct browser upload
+router.post('/upload-token', async (req: Request, res: Response) => {
+  try {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser?.eoaAddress) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+
+    const { filename, contentType } = req.body;
+    
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return res.status(500).json({ error: 'Blob storage not configured' });
+    }
+
+    // Generate a unique path for the upload
+    const timestamp = Date.now();
+    const safeFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const blobPath = `videos/${timestamp}-${safeFilename}`;
+
+    // Return the token and path for client-side upload
+    res.json({
+      success: true,
+      data: {
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+        path: blobPath,
+        contentType: contentType || 'video/mp4',
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Confirm upload and create video record
+router.post('/confirm-upload', async (req: Request, res: Response) => {
+  try {
+    const authenticatedUser = getAuthenticatedUser(req);
+    if (!authenticatedUser?.eoaAddress) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+
+    const { videoUrl, title, description, durationSeconds, chunkUnit, chunkValue, pricePerChunk } = req.body;
+
+    // Calculate chunk duration
+    let chunkDurationSeconds: number;
+    const value = parseFloat(chunkValue) || 5;
+    if (chunkUnit === 'minutes') {
+      chunkDurationSeconds = Math.round(value * 60);
+    } else {
+      chunkDurationSeconds = Math.round(value);
+    }
+
+    // Find User in DB
+    const creator = await prisma.user.findUnique({
+      where: { eoaAddress: authenticatedUser.eoaAddress }
+    });
+
+    if (!creator) {
+      return res.status(401).json({ error: 'User not found in database.' });
+    }
+
+    // Save to database
+    const video = await createVideo({ 
+      title, 
+      description: description || '', 
+      durationSeconds: parseInt(durationSeconds, 10),
+      chunkDurationSeconds,
+      pricePerChunk: parseFloat(pricePerChunk) || 0.001, 
+      creatorWallet: creator.eoaAddress,
+      creatorDcw: creator.dcwAddress,
+      videoUrl 
+    });
+
+    res.status(201).json({ success: true, data: video });
+  } catch (err: any) {
+    console.error('Confirm upload error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // 1. POST /api/videos - Create new video with Vercel Blob Upload
 router.post('/', upload.single('video'), async (req: Request, res: Response) => {
   console.log('\n📤 ====== UPLOAD REQUEST RECEIVED ======');

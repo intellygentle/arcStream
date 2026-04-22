@@ -78,6 +78,27 @@ export const videoAPI = {
     api.get(`/videos/${videoId}/paid-chunks`, {
       headers: { Authorization: `Bearer ${eoaAddress}` }
     }),
+
+
+      getUploadToken: (filename: string, contentType: string, eoaAddress: string) =>
+    api.post('/videos/upload-token', { filename, contentType }, {
+      headers: { Authorization: `Bearer ${eoaAddress}` }
+    }),
+
+  // Confirm upload and create video record
+  confirmUpload: (data: {
+    videoUrl: string;
+    title: string;
+    description: string;
+    durationSeconds: string;
+    chunkUnit: string;
+    chunkValue: string;
+    pricePerChunk: string;
+  }, eoaAddress: string) =>
+    api.post('/videos/confirm-upload', data, {
+      headers: { Authorization: `Bearer ${eoaAddress}` }
+    }),
+
 };
 
 export const x402Utils = {
