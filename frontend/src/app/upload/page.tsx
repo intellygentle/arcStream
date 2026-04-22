@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 import { Upload as UploadIcon, FileVideo, Loader2, DollarSign, Settings, X, Info } from 'lucide-react';
 import { formatDuration } from '@/config/app';
 
-
 interface UploadForm {
   title: string;
   description: string;
@@ -42,6 +41,9 @@ export default function UploadPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState('');
+
+  // Detect mobile for responsive behavior
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -222,24 +224,24 @@ export default function UploadPage() {
   const fileSizeMB = videoFile ? (videoFile.size / (1024 * 1024)).toFixed(2) : '0';
 
   return (
-    <main className="min-h-screen bg-[#1F1A31] retro-grid-bg p-4">
+    <main className="min-h-screen bg-[#1F1A31] retro-grid-bg p-3 sm:p-4 pb-safe">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#8656EF] to-[#00C8B3] bg-clip-text text-transparent mb-2 flex items-center gap-2">
-          <UploadIcon size={28} className="text-[#8656EF]" />
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#8656EF] to-[#00C8B3] bg-clip-text text-transparent mb-1 sm:mb-2 flex items-center gap-2">
+          <UploadIcon size={isMobile ? 22 : 28} className="text-[#8656EF]" />
           Publish Watch-Worthy Content
         </h1>
-        <p className="text-gray-400 mb-6">Set your price per chunk. Quality content earns more.</p>
+        <p className="text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">Set your price per chunk. Quality content earns more.</p>
         
-        <div className="glass-card rounded-2xl p-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="glass-card rounded-xl sm:rounded-2xl p-4 sm:p-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             
             {/* File Upload Area */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2">
                 Select Video File
               </label>
               <div 
-                className={`border-2 border-dashed rounded-xl p-8 text-center transition cursor-pointer ${
+                className={`border-2 border-dashed rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8 text-center transition cursor-pointer ${
                   isDragging 
                     ? 'border-[#8656EF] bg-[#8656EF]/10' 
                     : videoFile 
@@ -259,16 +261,16 @@ export default function UploadPage() {
                   id="video-file"
                   disabled={submitting}
                 />
-                <FileVideo size={48} className={`mx-auto mb-3 ${videoFile ? 'text-[#22C55E]' : 'text-[#8656EF]/60'}`} />
-                <p className="text-white font-medium">
+                <FileVideo size={isMobile ? 36 : 48} className={`mx-auto mb-2 sm:mb-3 ${videoFile ? 'text-[#22C55E]' : 'text-[#8656EF]/60'}`} />
+                <p className="text-white font-medium text-sm sm:text-base">
                   {videoFile ? videoFile.name : 'Click or drag video here'}
                 </p>
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-[10px] sm:text-xs text-gray-400 mt-1 sm:mt-2">
                   MP4, MOV, or WebM (Up to 5GB direct upload)
                 </p>
               </div>
               {videoFile && !submitting && (
-                <div className="flex justify-between text-xs text-gray-400 px-1 mt-2">
+                <div className="flex flex-wrap justify-between text-[10px] sm:text-xs text-gray-400 px-1 mt-2 gap-2">
                   <span>Size: {fileSizeMB} MB</span>
                   {videoDuration && <span>Duration: {formatDuration(videoDuration)}</span>}
                 </div>
@@ -277,31 +279,31 @@ export default function UploadPage() {
 
             {/* Upload Progress Bar */}
             {submitting && (
-              <div className="p-4 bg-[#2D2440] rounded-xl">
+              <div className="p-3 sm:p-4 bg-[#2D2440] rounded-xl">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-300">
+                  <span className="text-xs sm:text-sm font-medium text-gray-300">
                     {uploadStatus || 'Preparing upload...'}
                   </span>
-                  <span className="text-sm font-bold text-[#00C8B3]">
+                  <span className="text-xs sm:text-sm font-bold text-[#00C8B3]">
                     {uploadProgress}%
                   </span>
                 </div>
-                <div className="w-full h-3 bg-[#1F1A31] rounded-full overflow-hidden">
+                <div className="w-full h-2 sm:h-3 bg-[#1F1A31] rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-[#8656EF] to-[#00C8B3] transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
-                <div className="flex justify-between items-center mt-2">
-                  <p className="text-xs text-gray-400">
+                <div className="flex flex-wrap justify-between items-center mt-2 gap-2">
+                  <p className="text-[10px] sm:text-xs text-gray-400">
                     {uploadProgress < 100 ? 'Uploading... Please do not close this page.' : 'Processing...'}
                   </p>
                   <button
                     type="button"
                     onClick={handleCancelUpload}
-                    className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1"
+                    className="text-[10px] sm:text-xs text-red-400 hover:text-red-300 flex items-center gap-1"
                   >
-                    <X size={12} /> Cancel
+                    <X size={10} /> Cancel
                   </button>
                 </div>
               </div>
@@ -309,7 +311,7 @@ export default function UploadPage() {
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Title</label>
               <input 
                 name="title" 
                 required 
@@ -317,29 +319,29 @@ export default function UploadPage() {
                 onChange={handleChange} 
                 placeholder="My Watch-Worthy Video"
                 disabled={submitting}
-                className="w-full p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition" 
+                className="w-full p-2.5 sm:p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition text-sm sm:text-base" 
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Description</label>
               <textarea 
                 name="description" 
                 required 
                 value={form.description} 
                 onChange={handleChange} 
-                rows={3} 
+                rows={isMobile ? 2 : 3} 
                 placeholder="Tell viewers why this content is worth their money..."
                 disabled={submitting}
-                className="w-full p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition resize-none" 
+                className="w-full p-2.5 sm:p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition resize-none text-sm sm:text-base" 
               />
             </div>
 
             {/* Duration & Price */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Duration (seconds)</label>
+                <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">Duration (sec)</label>
                 <input 
                   name="durationSeconds" 
                   type="number" 
@@ -348,13 +350,13 @@ export default function UploadPage() {
                   onChange={handleChange} 
                   min="1"
                   disabled={submitting}
-                  className="w-full p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition" 
+                  className="w-full p-2.5 sm:p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition text-sm sm:text-base" 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1 flex items-center gap-1">
-                  <DollarSign size={14} className="text-[#00C8B3]" />
-                  Price / Chunk (USDC)
+                <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1 flex items-center gap-1">
+                  <DollarSign size={12} className="text-[#00C8B3]" />
+                  Price/Chunk
                 </label>
                 <input 
                   name="pricePerChunk" 
@@ -366,17 +368,17 @@ export default function UploadPage() {
                   min="0.000001"
                   max="0.01"
                   disabled={submitting}
-                  className="w-full p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition" 
+                  className="w-full p-2.5 sm:p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition text-sm sm:text-base" 
                 />
               </div>
             </div>
 
             {/* Chunk Configuration */}
-            <div className="p-4 bg-[#2D2440] rounded-xl border border-[#3D3458]">
-              <label className="block text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
-                <Settings size={16} className="text-[#8656EF]" /> Chunk Configuration
+            <div className="p-3 sm:p-4 bg-[#2D2440] rounded-xl border border-[#3D3458]">
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2 sm:mb-3 flex items-center gap-2">
+                <Settings size={14} className="text-[#8656EF]" /> Chunk Configuration
               </label>
-              <div className="flex gap-2">
+              <div className="flex flex-col xs:flex-row gap-2">
                 <input 
                   name="chunkValue" 
                   type="number" 
@@ -384,29 +386,31 @@ export default function UploadPage() {
                   onChange={handleChange} 
                   min="1"
                   disabled={submitting}
-                  className="flex-1 p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition" 
+                  className="flex-1 p-2.5 sm:p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition text-sm" 
                 />
                 <select 
                   name="chunkUnit" 
                   value={form.chunkUnit} 
                   onChange={handleChange} 
                   disabled={submitting}
-                  className="w-32 p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition"
+                  className="w-full xs:w-32 p-2.5 sm:p-3 bg-[#1F1A31] border border-[#3D3458] rounded-xl text-white outline-none focus:ring-2 focus:ring-[#8656EF] disabled:opacity-50 transition text-sm"
                 >
                   <option value="seconds">Seconds</option>
                   <option value="minutes">Minutes</option>
                 </select>
               </div>
-              <div className="mt-3 flex justify-between items-end">
-                <p className="text-xs text-gray-400">
-                  Total Chunks: <span className="font-bold text-[#8656EF]">{totalChunks}</span><br /> 
+              <div className="mt-3 flex flex-wrap justify-between items-end gap-2">
+                <p className="text-[10px] sm:text-xs text-gray-400">
+                  Total Chunks: <span className="font-bold text-[#8656EF]">{totalChunks}</span>
+                  <span className="hidden sm:inline"><br /></span>
+                  <span className="sm:hidden"> • </span>
                   Total Cost: <span className="font-bold text-[#00C8B3]">${totalCost.toFixed(4)} USDC</span>
                 </p>
                 {!isValidChunk && durationSec > 0 && (
-                   <p className="text-[10px] text-red-400 font-medium italic">
-                     {chunkSeconds < 5 ? 'Min 5 seconds' : 
-                      chunkSeconds > 3600 ? 'Max 60 minutes' : 
-                      'Exceeds video duration'}
+                   <p className="text-[8px] sm:text-[10px] text-red-400 font-medium italic">
+                     {chunkSeconds < 5 ? 'Min 5s' : 
+                      chunkSeconds > 3600 ? 'Max 60m' : 
+                      'Exceeds duration'}
                    </p>
                 )}
               </div>
@@ -416,11 +420,11 @@ export default function UploadPage() {
             <button
               type="submit"
               disabled={submitting || !eoaAddress || !videoFile || !isValidChunk}
-              className="w-full py-4 glow-button text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-3 sm:py-4 glow-button text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               {submitting ? (
                 <>
-                  <Loader2 size={20} className="animate-spin" />
+                  <Loader2 size={isMobile ? 16 : 20} className="animate-spin" />
                   {uploadStatus || 'Uploading...'}
                 </>
               ) : (
@@ -431,16 +435,16 @@ export default function UploadPage() {
         </div>
         
         {/* Tips */}
-        <div className="mt-6 p-5 bg-gradient-to-r from-[#8656EF]/10 to-[#00C8B3]/10 rounded-xl border border-[#3D3458]">
-          <h3 className="font-medium text-white mb-2 flex items-center gap-2">
-            <Info size={16} className="text-[#8656EF]" /> Upload Tips
+        <div className="mt-4 sm:mt-6 p-4 sm:p-5 bg-gradient-to-r from-[#8656EF]/10 to-[#00C8B3]/10 rounded-xl border border-[#3D3458]">
+          <h3 className="font-medium text-white text-sm sm:text-base mb-2 flex items-center gap-2">
+            <Info size={14} className="text-[#8656EF]" /> Upload Tips
           </h3>
-          <ul className="text-sm text-gray-300 space-y-1">
-            <li>• Maximum file size: <span className="text-[#00C8B3]">5GB</span> (Vercel Blob)</li>
-            <li>• Minimum chunk: <span className="text-[#8656EF]">5 seconds</span></li>
-            <li>• Maximum chunk: <span className="text-[#8656EF]">60 minutes</span> (3600 seconds)</li>
-            <li>• First chunk is always <span className="text-[#22C55E]">free</span> for preview</li>
-            <li>• Quality content earns more - viewers pay only for what's worthy</li>
+          <ul className="text-xs sm:text-sm text-gray-300 space-y-1">
+            <li>• Max file: <span className="text-[#00C8B3]">5GB</span> (Vercel Blob)</li>
+            <li>• Min chunk: <span className="text-[#8656EF]">5 seconds</span></li>
+            <li>• Max chunk: <span className="text-[#8656EF]">60 minutes</span></li>
+            <li>• First chunk is <span className="text-[#22C55E]">free</span> for preview</li>
+            <li className="hidden sm:block">• Quality content earns more - viewers pay only for what's worthy</li>
           </ul>
         </div>
       </div>

@@ -1,0 +1,2727 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.env.example
+.gitignore
+eslint.config.mjs
+next.config.ts
+package.json
+postcss.config.mjs
+public/file.svg
+public/globe.svg
+public/next.svg
+public/vercel.svg
+public/window.svg
+README.md
+src/app/favicon.ico
+src/app/globals.css
+src/app/layout.tsx
+src/app/page.tsx
+src/app/upload/page.tsx
+src/app/watch/[id]/page.tsx
+src/components/VideoPlayer.tsx
+src/components/WalletAuth.tsx
+src/config/app.ts
+src/lib/api.ts
+tsc_output_2.txt
+tsc_output.txt
+tsconfig.json
+vercel.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".env.example">
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_ARC_RPC_URL=https://rpc.testnet.arc.network
+NEXT_PUBLIC_USDC_CONTRACT=0x3600000000000000000000000000000000000000
+NEXT_PUBLIC_X402_FACILITATOR=https://facilitator.x402.org
+</file>
+
+<file path="eslint.config.mjs">
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+  ]),
+]);
+
+export default eslintConfig;
+</file>
+
+<file path="next.config.ts">
+// import type { NextConfig } from "next";
+
+// const nextConfig: NextConfig = {
+//   /* config options here */
+// };
+
+// export default nextConfig;
+
+
+
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  // Allow images from external domains if needed
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+  // Enable CORS for API routes
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Credentials', value: 'true' },
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'X-Requested-With, Content-Type, Authorization, Range' },
+        ],
+      },
+    ];
+  },
+  // Environment variables for client
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://arcstream-backend.vercel.app/api',
+  },
+};
+
+export default nextConfig;
+</file>
+
+<file path="package.json">
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^10.3.0",
+    "@vercel/blob": "^2.3.3",
+    "@x402/core": "^2.10.0",
+    "@x402/evm": "^2.10.0",
+    "autoprefixer": "^10.5.0",
+    "axios": "^1.15.0",
+    "ethers": "^6.13.0",
+    "lucide-react": "^1.8.0",
+    "next": "16.2.4",
+    "postcss": "^8.5.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-hot-toast": "^2.6.0",
+    "react-player": "^3.4.0",
+    "siwe": "^2.3.2",
+    "uuid": "^14.0.0",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20.19.39",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5"
+  }
+}
+</file>
+
+<file path="postcss.config.mjs">
+const config = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+
+export default config;
+</file>
+
+<file path="public/file.svg">
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/next.svg">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="README.md">
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+<file path="src/app/globals.css">
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.2s ease-out;
+}
+</file>
+
+<file path="src/app/layout.tsx">
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "Create Next App",
+  description: "Generated by create next app",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">{children}</body>
+    </html>
+  );
+}
+</file>
+
+<file path="src/app/page.tsx">
+// // src/app/page.tsx
+
+'use client';
+
+import { useEffect, useState } from 'react';
+import WalletAuth from '@/components/WalletAuth';
+import { videoAPI } from '@/lib/api';
+import { Search, AlertCircle, RefreshCw, Trash2, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { useWallet } from '@/components/WalletAuth';
+
+interface Video {
+  id: string;
+  title: string;
+  description: string;
+  durationSeconds: number;
+  chunkDuration: number;
+  pricePerChunk: number;
+  creatorWallet: string;
+  videoUrl: string;
+  createdAt: string;
+}
+
+export default function Home() {
+  const { eoa: viewerWallet } = useWallet();
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [q, setQ] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+
+  const fetchVideos = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await videoAPI.list(q);
+      const videosData = res.data?.data || res.data || [];
+      setVideos(Array.isArray(videosData) ? videosData : []);
+    } catch (err: any) {
+      console.error('Fetch error:', err);
+      setError('Could not connect to backend. Is it running on port 3001?');
+      setVideos([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { 
+    fetchVideos(); 
+  }, [q]);
+
+  const handleDelete = async (videoId: string) => {
+    if (!viewerWallet) {
+      toast.error('Please connect your wallet first');
+      return;
+    }
+    
+    setDeletingId(videoId);
+    try {
+      const res = await videoAPI.delete(videoId, viewerWallet);
+      toast.success(res.data.data.message || 'Video deleted successfully');
+      // Remove from local state
+      setVideos(prev => prev.filter(v => v.id !== videoId));
+      setShowDeleteConfirm(null);
+    } catch (err: any) {
+      console.error('Delete error:', err);
+      toast.error(err.response?.data?.error || 'Failed to delete video');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const isCreator = (video: Video) => {
+    return viewerWallet && video.creatorWallet.toLowerCase() === viewerWallet.toLowerCase();
+  };
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 max-w-5xl mx-auto space-y-6">
+      <header className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">🎬 ArcStream</h1>
+        <Link 
+          href="/upload" 
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-medium transition"
+        >
+          + List Video
+        </Link>
+      </header>
+      
+      <WalletAuth />
+
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-3 text-gray-400" size={20}/>
+        <input 
+          value={q} 
+          onChange={e => setQ(e.target.value)} 
+          placeholder="Search by title or ID..." 
+          className="w-full pl-10 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+        />
+      </div>
+
+      {/* Error / Retry State */}
+      {error && (
+        <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg flex items-center justify-between text-red-800 dark:text-red-200">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={20}/>
+            <span>{error}</span>
+          </div>
+          <button 
+            onClick={fetchVideos} 
+            className="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-1 rounded shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+          >
+            <RefreshCw size={16}/> Retry
+          </button>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && !error && (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-500 dark:text-gray-400">Loading feed...</p>
+        </div>
+      )}
+
+      {/* Video Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {videos.map(v => (
+          <div key={v.id} className="relative group">
+            <Link 
+              href={`/watch/${v.id}`} 
+              className="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition border border-gray-100 dark:border-gray-700"
+            >
+              <div className="flex justify-between items-start">
+                <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{v.title}</h3>
+                {isCreator(v) && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowDeleteConfirm(v.id);
+                    }}
+                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition opacity-0 group-hover:opacity-100"
+                    title="Delete video"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
+              </div>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1 line-clamp-2">{v.description}</p>
+              <div className="mt-3 flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 px-2 py-1 rounded">
+                <span className="font-medium text-blue-600 dark:text-blue-400">
+                  💰 ${v.pricePerChunk.toFixed(6)} / {v.chunkDuration} min
+                </span>
+                <span>⏱️ {formatDuration(v.durationSeconds)}</span>
+              </div>
+              {isCreator(v) && (
+                <div className="mt-2 text-xs">
+                  <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-0.5 rounded-full">
+                    Your Video
+                  </span>
+                </div>
+              )}
+            </Link>
+            
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm === v.id && (
+              <div className="absolute inset-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4 z-10">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Delete Video?</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  This will permanently delete "{v.title}" and all associated payment records.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDelete(v.id)}
+                    disabled={deletingId === v.id}
+                    className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-1"
+                  >
+                    {deletingId === v.id ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 size={14} />
+                        Delete
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(null)}
+                    className="flex-1 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        
+        {!loading && !error && videos.length === 0 && (
+          <div className="col-span-2 text-center py-12 bg-white dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+            <p className="text-gray-500 dark:text-gray-400">No videos found.</p>
+            <Link href="/upload" className="text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">
+              Be the first to list one!
+            </Link>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+</file>
+
+<file path="src/app/upload/page.tsx">
+// frontend/src/app/upload/page.tsx
+
+'use client';
+
+import { useState, ChangeEvent, FormEvent, useRef } from 'react';
+import { useWallet } from '@/components/WalletAuth';
+import { videoAPI } from '@/lib/api';
+import { upload } from '@vercel/blob/client';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { Upload as UploadIcon, FileVideo, Loader2, DollarSign, Settings, X } from 'lucide-react';
+import { formatDuration } from '@/config/app';
+
+interface UploadForm {
+  title: string;
+  description: string;
+  durationSeconds: string;
+  chunkUnit: 'seconds' | 'minutes';
+  chunkValue: string;
+  pricePerChunk: string;
+}
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5GB
+
+export default function UploadPage() {
+  const { eoa: eoaAddress, dcwAddress } = useWallet();
+  const router = useRouter();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
+  const [form, setForm] = useState<UploadForm>({
+    title: '',
+    description: '',
+    durationSeconds: '',
+    chunkUnit: 'minutes',
+    chunkValue: '5',
+    pricePerChunk: '0.001',
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoDuration, setVideoDuration] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState('');
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  // ✅ CORRECT client-side upload with REAL progress tracking
+  const uploadDirectToBlob = async (file: File): Promise<string> => {
+    console.log('📤 Starting client upload to Vercel Blob...');
+    
+    const handleUploadUrl = `${process.env.NEXT_PUBLIC_API_URL}/videos/upload-token`;
+    console.log('   handleUploadUrl:', handleUploadUrl);
+    
+    // Create abort controller for cancellation
+    abortControllerRef.current = new AbortController();
+    
+    // @ts-ignore - onUploadProgress exists but types might be outdated
+    const blob = await upload(file.name, file, {
+      access: 'public',
+      handleUploadUrl: handleUploadUrl,
+      clientPayload: JSON.stringify({
+        eoaAddress: eoaAddress,
+        filename: file.name,
+      }),
+      abortSignal: abortControllerRef.current.signal,
+      // ✅ REAL progress tracking - built into the SDK!
+      onUploadProgress: (progressEvent: { loaded: number; total: number; percentage: number }) => {
+        const percent = Math.round(progressEvent.percentage);
+        setUploadProgress(percent);
+        setUploadStatus(`Uploading... ${percent}%`);
+        console.log(`📊 Upload progress: ${percent}% (${(progressEvent.loaded / 1024 / 1024).toFixed(2)} MB / ${(progressEvent.total / 1024 / 1024).toFixed(2)} MB)`);
+      },
+    });
+
+    console.log('✅ Blob upload complete:', blob.url);
+    return blob.url;
+  };
+
+  const processFile = (file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error(`File size must be less than 5GB`);
+      return;
+    }
+    
+    setVideoFile(file);
+    setUploadProgress(0);
+    setUploadStatus('');
+    
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.onloadedmetadata = () => {
+      const duration = Math.floor(video.duration);
+      setVideoDuration(duration);
+      setForm(prev => ({ 
+        ...prev, 
+        durationSeconds: duration.toString(),
+        title: prev.title || file.name.replace(/\.[^/.]+$/, "")
+      }));
+      URL.revokeObjectURL(video.src);
+    };
+    video.src = URL.createObjectURL(file);
+    
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    toast.success(`✅ Selected: ${file.name} (${sizeMB} MB)`);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('video/')) {
+      processFile(file);
+    } else {
+      toast.error('Please drop a valid video file');
+    }
+  };
+
+  const handleCancelUpload = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setSubmitting(false);
+    setUploadProgress(0);
+    setUploadStatus('');
+    toast.error('Upload cancelled');
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    
+    if (!eoaAddress || !dcwAddress) {
+      toast.error('Connect wallet first');
+      return;
+    }
+    
+    if (!videoFile) {
+      toast.error('Please select a video file to upload');
+      return;
+    }
+
+    if (!form.durationSeconds || parseInt(form.durationSeconds) < 1) {
+      toast.error('Please enter a valid video duration');
+      return;
+    }
+
+    setSubmitting(true);
+    setUploadProgress(0);
+    setUploadStatus('Preparing upload...');
+    
+    const sizeMB = (videoFile.size / (1024 * 1024)).toFixed(2);
+    toast.loading(`Starting upload (${sizeMB} MB)...`, { id: 'upload-toast' });
+
+    try {
+      const videoUrl = await uploadDirectToBlob(videoFile);
+      
+      toast.dismiss('upload-toast');
+      toast.success('✅ Upload complete! Saving video...', { id: 'save-toast' });
+      setUploadStatus('Saving video metadata...');
+      
+      const res = await videoAPI.confirmUpload({
+        videoUrl,
+        title: form.title,
+        description: form.description,
+        durationSeconds: form.durationSeconds,
+        chunkUnit: form.chunkUnit,
+        chunkValue: form.chunkValue,
+        pricePerChunk: form.pricePerChunk,
+      }, eoaAddress);
+      
+      toast.dismiss('save-toast');
+      toast.success('✅ Video published successfully!');
+      router.push(`/watch/${res.data.data.id}`);
+      
+    } catch (err: any) {
+      toast.dismiss('upload-toast');
+      toast.dismiss('save-toast');
+      console.error('Upload error:', err);
+      
+      if (err.name === 'AbortError' || err.message?.includes('abort')) {
+        toast.error('Upload cancelled');
+      } else {
+        toast.error(err.message || 'Failed to publish video');
+      }
+    } finally {
+      setSubmitting(false);
+      setUploadProgress(0);
+      setUploadStatus('');
+      abortControllerRef.current = null;
+    }
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const getChunkSeconds = (): number => {
+    const value = parseFloat(form.chunkValue) || 5;
+    return form.chunkUnit === 'minutes' ? Math.round(value * 60) : Math.round(value);
+  };
+  
+  const chunkSeconds = getChunkSeconds();
+  const durationSec = parseInt(form.durationSeconds) || 0;
+  const totalChunks = durationSec > 0 ? Math.ceil(durationSec / chunkSeconds) : 0;
+  const totalCost = totalChunks * parseFloat(form.pricePerChunk || '0.001');
+  const isValidChunk = chunkSeconds >= 5 && chunkSeconds <= 3600 && chunkSeconds <= (durationSec || Infinity);
+
+  const fileSizeMB = videoFile ? (videoFile.size / (1024 * 1024)).toFixed(2) : '0';
+
+  return (
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+          <UploadIcon size={24} />
+          Publish Video
+        </h1>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            
+            {/* File Upload Area */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Select Video File
+              </label>
+              <div 
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition cursor-pointer ${
+                  isDragging 
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                    : videoFile 
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
+                      : 'border-gray-300 dark:border-gray-600 hover:border-blue-500'
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => !submitting && document.getElementById('video-file')?.click()}
+              >
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="video-file"
+                  disabled={submitting}
+                />
+                <FileVideo size={48} className={`mx-auto mb-3 ${videoFile ? 'text-green-500' : 'text-gray-400'}`} />
+                <p className="text-gray-700 dark:text-gray-200 font-medium">
+                  {videoFile ? videoFile.name : 'Click or drag video here'}
+                </p>
+                <p className="text-xs text-gray-500 mt-2">
+                  MP4, MOV, or WebM (Up to 5GB direct upload)
+                </p>
+              </div>
+              {videoFile && !submitting && (
+                <div className="flex justify-between text-xs text-blue-600 dark:text-blue-400 px-1 mt-2">
+                  <span>Size: {fileSizeMB} MB</span>
+                  {videoDuration && <span>Duration: {formatDuration(videoDuration)}</span>}
+                </div>
+              )}
+            </div>
+
+            {/* Upload Progress Bar */}
+            {submitting && (
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                    {uploadStatus || 'Preparing upload...'}
+                  </span>
+                  <span className="text-sm font-bold text-blue-700 dark:text-blue-300">
+                    {uploadProgress}%
+                  </span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                  <p className="text-xs text-blue-600 dark:text-blue-400">
+                    {uploadProgress < 100 ? 'Uploading... Please do not close this page.' : 'Processing...'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleCancelUpload}
+                    className="text-xs text-red-500 hover:text-red-700 flex items-center gap-1"
+                  >
+                    <X size={12} /> Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+              <input 
+                name="title" 
+                required 
+                value={form.title} 
+                onChange={handleChange} 
+                placeholder="My Awesome Video"
+                disabled={submitting}
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+              <textarea 
+                name="description" 
+                required 
+                value={form.description} 
+                onChange={handleChange} 
+                rows={3} 
+                placeholder="Tell viewers about your content..."
+                disabled={submitting}
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
+              />
+            </div>
+
+            {/* Duration & Price */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Duration (seconds)</label>
+                <input 
+                  name="durationSeconds" 
+                  type="number" 
+                  required 
+                  value={form.durationSeconds} 
+                  onChange={handleChange} 
+                  min="1"
+                  disabled={submitting}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1">
+                  <DollarSign size={14} />
+                  Price / Chunk (USDC)
+                </label>
+                <input 
+                  name="pricePerChunk" 
+                  type="number" 
+                  step="0.000001" 
+                  required 
+                  value={form.pricePerChunk} 
+                  onChange={handleChange} 
+                  min="0.000001"
+                  max="0.01"
+                  disabled={submitting}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
+                />
+              </div>
+            </div>
+
+            {/* Chunk Configuration */}
+            <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                <Settings size={16} /> Chunk Configuration
+              </label>
+              <div className="flex gap-2">
+                <input 
+                  name="chunkValue" 
+                  type="number" 
+                  value={form.chunkValue} 
+                  onChange={handleChange} 
+                  min="1"
+                  disabled={submitting}
+                  className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
+                />
+                <select 
+                  name="chunkUnit" 
+                  value={form.chunkUnit} 
+                  onChange={handleChange} 
+                  disabled={submitting}
+                  className="w-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                >
+                  <option value="seconds">Seconds</option>
+                  <option value="minutes">Minutes</option>
+                </select>
+              </div>
+              <div className="mt-3 flex justify-between items-end">
+                <p className="text-xs text-gray-500">
+                  Total Chunks: <span className="font-bold text-blue-600">{totalChunks}</span><br /> 
+                  Total Cost: <span className="font-bold text-green-600">${totalCost.toFixed(4)} USDC</span>
+                </p>
+                {!isValidChunk && durationSec > 0 && (
+                   <p className="text-[10px] text-red-500 font-medium italic">
+                     {chunkSeconds < 5 ? 'Min 5 seconds' : 
+                      chunkSeconds > 3600 ? 'Max 60 minutes' : 
+                      'Exceeds video duration'}
+                   </p>
+                )}
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={submitting || !eoaAddress || !videoFile || !isValidChunk}
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  {uploadStatus || 'Uploading...'}
+                </>
+              ) : (
+                '🚀 Publish to ArcStream'
+              )}
+            </button>
+          </form>
+        </div>
+        
+        {/* Tips */}
+        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+          <h3 className="font-medium text-blue-900 dark:text-blue-200 mb-2">💡 Upload Tips</h3>
+          <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+            <li>• Maximum file size: 5GB (Vercel Blob)</li>
+            <li>• Minimum chunk: 5 seconds</li>
+            <li>• Maximum chunk: 60 minutes (3600 seconds)</li>
+            <li>• First chunk is always free for preview</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  );
+}
+</file>
+
+<file path="src/app/watch/[id]/page.tsx">
+// frontend/src/app/watch/[id]/page.tsx
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft, Share2, Heart, MessageCircle, Loader2, AlertCircle, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { videoAPI } from '@/lib/api';
+import { useWallet } from '@/components/WalletAuth';
+import WalletAuth from '@/components/WalletAuth';
+import VideoPlayer from '@/components/VideoPlayer';
+import { formatUSDC, calculateVideoChunks, formatDuration } from '@/config/app';
+
+interface Video {
+  id: string;
+  title: string;
+  description: string;
+  durationSeconds: number;
+  chunkDurationSeconds: number;
+  pricePerChunk: number;
+  creatorWallet: string;
+  creatorDcw: string;
+  videoUrl: string;
+  createdAt: string;
+}
+
+export default function WatchPage() {
+  const params = useParams();
+  const router = useRouter();
+  
+  const { eoa: viewerWallet, dcwAddress: viewerDcw } = useWallet();
+  
+  const [video, setVideo] = useState<Video | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
+  const [paymentLog, setPaymentLog] = useState<Array<{ chunk: number; amount: string; timestamp: string }>>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  
+  const videoId = params.id as string;
+
+  const isCreator = video && viewerWallet && 
+    video.creatorWallet.toLowerCase() === viewerWallet.toLowerCase();
+
+  const handleDelete = async () => {
+    if (!video || !viewerWallet) return;
+    
+    setDeleting(true);
+    try {
+      const res = await videoAPI.delete(video.id, viewerWallet);
+      toast.success(res.data.data.message || 'Video deleted successfully');
+      router.push('/');
+    } catch (err: any) {
+      console.error('Delete error:', err);
+      toast.error(err.response?.data?.error || 'Failed to delete video');
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchVideo = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await videoAPI.getVideo(videoId);
+        setVideo(res.data.data || res.data);
+      } catch (err: any) {
+        console.error('Fetch error:', err);
+        setError(err.response?.data?.error || 'Video not found');
+        if (err.response?.status === 404) {
+          toast.error('Video not found');
+          setTimeout(() => router.push('/'), 2000);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (videoId) fetchVideo();
+  }, [videoId, router]);
+  
+  const handlePaymentSuccess = (chunkIndex: number, amount: string) => {
+    setPaymentLog(prev => [...prev, {
+      chunk: chunkIndex,
+      amount,
+      timestamp: new Date().toISOString()
+    }]);
+    console.log(`💸 Nanopayment: Chunk ${chunkIndex} - ${amount} USDC to ${video?.creatorDcw}`);
+  };
+  
+  const handlePaymentError = (errorMsg: string) => {
+    toast.error(errorMsg);
+  };
+  
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin mx-auto mb-4 text-blue-600" size={40} />
+          <p className="text-gray-600 dark:text-gray-300">Loading video...</p>
+        </div>
+      </main>
+    );
+  }
+  
+  if (error || !video) {
+    return (
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <AlertCircle className="mx-auto mb-4 text-red-500" size={48} />
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Video Not Found</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{error || "The video you're looking for doesn't exist."}</p>
+          <Link 
+            href="/" 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            <ArrowLeft size={16} />
+            Back to Feed
+          </Link>
+        </div>
+      </main>
+    );
+  }
+  
+  // ✅ Calculate chunks using chunkDurationSeconds
+  const { chunkSeconds, totalChunks } = calculateVideoChunks(
+    video.durationSeconds, 
+    video.chunkDurationSeconds
+  );
+  
+  return (
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+          <Link 
+            href="/" 
+            className="flex items-center gap-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 transition"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-medium">Back</span>
+          </Link>
+          
+          <div className="flex items-center gap-2">
+            {isCreator && (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition"
+                title="Delete video"
+              >
+                <Trash2 size={20} />
+              </button>
+            )}
+            <button className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition">
+              <Heart size={20} />
+            </button>
+            <button className="p-2 text-gray-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition">
+              <MessageCircle size={20} />
+            </button>
+            <button className="p-2 text-gray-500 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition">
+              <Share2 size={20} />
+            </button>
+          </div>
+        </div>
+      </header>
+      
+      <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
+        <WalletAuth />
+        
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{video.title}</h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">{video.description}</p>
+          
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+            <span className="flex items-center gap-1">
+              ⏱️ {formatDuration(video.durationSeconds)} total
+            </span>
+            <span className="flex items-center gap-1">
+              💰 {formatUSDC(video.pricePerChunk)} / {formatDuration(video.chunkDurationSeconds)}
+            </span>
+            <span className="flex items-center gap-1">
+              🔢 {totalChunks} chunk{totalChunks !== 1 ? 's' : ''}
+            </span>
+            <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-medium">
+              ✓ ≤ $0.01/chunk (Hackathon Compliant)
+            </span>
+          </div>
+        </div>
+        
+        {viewerWallet ? (
+          <VideoPlayer
+            videoId={video.id}
+            videoUrl={video.videoUrl}
+            durationSeconds={video.durationSeconds}
+            chunkDurationSeconds={video.chunkDurationSeconds}
+            pricePerChunk={video.pricePerChunk}
+            creatorWallet={video.creatorWallet}
+            creatorDcw={video.creatorDcw}
+            viewerWallet={viewerWallet}
+            viewerDcw={viewerDcw}
+            onPaymentSuccess={handlePaymentSuccess}
+            onPaymentError={handlePaymentError}
+          />
+        ) : (
+          <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-xl flex items-center justify-center">
+            <p className="text-gray-500 dark:text-gray-400 text-center px-8">
+              🔐 Connect your wallet above to start watching with nanopayments
+            </p>
+          </div>
+        )}
+        
+        {paymentLog.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Payment History</h3>
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {paymentLog.map((payment, idx) => (
+                <div key={idx} className="flex items-center justify-between text-sm p-2 bg-gray-50 dark:bg-gray-700/50 rounded">
+                  <span className="text-gray-600 dark:text-gray-300">
+                    Chunk {payment.chunk + 1} ({formatDuration(chunkSeconds)})
+                  </span>
+                  <span className="font-mono font-medium text-green-600 dark:text-green-400">
+                    -{payment.amount} USDC
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+              💡 Hackathon Requirement: 50+ on-chain transactions achieved via granular chunks.
+            </p>
+          </div>
+        )}
+        
+        {/* Debug Link */}
+        <div className="text-right">
+          <a
+            href={`http://localhost:3001/api/videos/debug/${video.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
+            🔍 Debug Video
+          </a>
+        </div>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Delete Video?</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              This will permanently delete "{video.title}" and all associated payment records. This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={16} />
+                    Yes, Delete
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+</file>
+
+<file path="src/components/VideoPlayer.tsx">
+// frontend/src/components/VideoPlayer.tsx
+
+'use client';
+
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Play, Pause, Loader2, AlertCircle, RotateCcw, Lock, Zap, ZapOff } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { videoAPI, x402Utils, type SignedPayment, type PaymentDetails } from '@/lib/api';
+import { formatUSDC, calculateVideoChunks, formatDuration } from '@/config/app';
+
+interface VideoPlayerProps {
+  videoId: string;
+  videoUrl: string;
+  durationSeconds: number;
+  chunkDurationSeconds: number;
+  pricePerChunk: number;
+  creatorWallet: string;
+  creatorDcw: string;
+  viewerWallet: string | null;
+  viewerDcw: string | null;
+  onPaymentSuccess?: (chunkIndex: number, amount: string) => void;
+  onPaymentError?: (error: string) => void;
+}
+
+export default function VideoPlayer({
+  videoId,
+  videoUrl,
+  durationSeconds,
+  chunkDurationSeconds,
+  pricePerChunk,
+  creatorWallet,
+  creatorDcw,
+  viewerWallet,
+  viewerDcw,
+  onPaymentSuccess,
+  onPaymentError
+}: VideoPlayerProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  const [playing, setPlaying] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [currentChunk, setCurrentChunk] = useState(0);
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle');
+  const [unlockedChunks, setUnlockedChunks] = useState<Set<number>>(new Set([0]));
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [mounted, setMounted] = useState(true);
+  const [needsPayment, setNeedsPayment] = useState(false);
+  const [lastPaidChunk, setLastPaidChunk] = useState(0);
+  const [isSeeking, setIsSeeking] = useState(false);
+  
+  // Auto-pay feature
+  const [autoPayEnabled, setAutoPayEnabled] = useState(false);
+  const [isAutoPaying, setIsAutoPaying] = useState(false);
+  const [autoPayProcessedForChunk, setAutoPayProcessedForChunk] = useState<Set<number>>(new Set());
+
+  const { chunkSeconds, totalChunks } = calculateVideoChunks(durationSeconds, chunkDurationSeconds);
+  const streamUrl = `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'}/api/videos/${videoId}/stream`;
+  
+  const isCurrentChunkPaid = unlockedChunks.has(currentChunk);
+  const currentChunkEndTime = Math.min((currentChunk + 1) * chunkSeconds, durationSeconds);
+  
+  const nextChunk = currentChunk + 1;
+  const isNextChunkLocked = nextChunk < totalChunks && !unlockedChunks.has(nextChunk);
+
+  console.log('🎬 VideoPlayer:', { 
+    videoId, durationSeconds, totalChunks, chunkSeconds,
+    currentChunk, nextChunk, isNextChunkLocked, autoPayEnabled,
+    unlockedChunks: Array.from(unlockedChunks)
+  });
+
+  // Load previously paid chunks on mount
+  useEffect(() => {
+    const loadPaidChunks = async () => {
+      if (!viewerWallet || !videoId) return;
+      
+      try {
+        console.log('📥 Loading paid chunks for user...');
+        const res = await videoAPI.getPaidChunks(videoId, viewerWallet);
+        
+        if (res.data.success) {
+          const paidChunks = res.data.data.paidChunks;
+          console.log('✅ Previously paid chunks:', paidChunks);
+          
+          const unlocked = new Set<number>([0]);
+          paidChunks.forEach((chunk: number) => unlocked.add(chunk));
+          setUnlockedChunks(unlocked);
+          
+          if (paidChunks.length > 0) {
+            setLastPaidChunk(Math.max(...paidChunks));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load paid chunks:', err);
+      }
+    };
+    
+    if (viewerWallet) {
+      loadPaidChunks();
+    }
+  }, [videoId, viewerWallet]);
+
+  // Auto-pay immediately when entering a chunk with locked next chunk
+  useEffect(() => {
+    if (!autoPayEnabled) return;
+    if (!playing || !ready || !mounted) return;
+    if (currentChunk >= totalChunks - 1) return;
+    if (!viewerWallet || !viewerDcw) return;
+    if (paymentStatus === 'pending' || isAutoPaying) return;
+    
+    const nextChunkIdx = currentChunk + 1;
+    
+    if (unlockedChunks.has(nextChunkIdx)) return;
+    if (autoPayProcessedForChunk.has(nextChunkIdx)) return;
+    
+    console.log(`⚡ Auto-paying for chunk ${nextChunkIdx} immediately`);
+    handleAutoPayNext();
+  }, [autoPayEnabled, playing, ready, currentChunk, totalChunks, unlockedChunks, 
+      autoPayProcessedForChunk, viewerWallet, viewerDcw, paymentStatus, isAutoPaying, mounted]);
+
+  // Reset auto-pay processed flag when chunk changes
+  useEffect(() => {
+    setAutoPayProcessedForChunk(prev => {
+      const next = new Set(prev);
+      return next;
+    });
+  }, [currentChunk]);
+
+  // Auto-pay for next chunk
+  const handleAutoPayNext = useCallback(async () => {
+    const nextChunkIdx = currentChunk + 1;
+    if (nextChunkIdx >= totalChunks) return;
+    if (unlockedChunks.has(nextChunkIdx)) return;
+    
+    setIsAutoPaying(true);
+    setAutoPayProcessedForChunk(prev => new Set(prev).add(nextChunkIdx));
+    
+    try {
+      const success = await payForChunk(nextChunkIdx, true);
+      
+      if (success) {
+        toast.success(`⚡ Auto-paid chunk ${nextChunkIdx + 1}`, {
+          duration: 1500,
+          position: 'bottom-left',
+          icon: '⚡',
+        });
+      }
+    } catch (err) {
+      console.error('Auto-pay error:', err);
+    } finally {
+      setIsAutoPaying(false);
+    }
+  }, [currentChunk, totalChunks, unlockedChunks]);
+
+  // Toggle auto-pay
+  const toggleAutoPay = useCallback(() => {
+    setAutoPayEnabled(prev => {
+      const newState = !prev;
+      if (newState) {
+        toast.success('⚡ Auto-pay enabled - next chunks will be paid automatically', {
+          duration: 2000,
+          position: 'bottom-left',
+          icon: '⚡',
+        });
+        setAutoPayProcessedForChunk(new Set());
+      } else {
+        toast('Auto-pay disabled', {
+          duration: 1500,
+          position: 'bottom-left',
+          icon: '🔕',
+        });
+      }
+      return newState;
+    });
+  }, []);
+
+  // Ensure all chunks between last paid and current are paid
+  const ensureChunksPaid = useCallback(async (targetChunk: number): Promise<boolean> => {
+    if (targetChunk === 0) return true;
+    if (unlockedChunks.has(targetChunk)) return true;
+    
+    let highestContiguous = 0;
+    for (let i = 0; i <= targetChunk; i++) {
+      if (unlockedChunks.has(i)) {
+        highestContiguous = i;
+      } else {
+        break;
+      }
+    }
+    
+    const chunksToPay: number[] = [];
+    for (let i = highestContiguous + 1; i <= targetChunk; i++) {
+      if (!unlockedChunks.has(i)) {
+        chunksToPay.push(i);
+      }
+    }
+    
+    if (chunksToPay.length === 0) return true;
+    
+    console.log(`💰 Need to pay for chunks: ${chunksToPay.join(', ')}`);
+    
+    for (const chunk of chunksToPay) {
+      const success = await payForChunk(chunk);
+      if (!success) return false;
+    }
+    
+    return true;
+  }, [unlockedChunks]);
+
+  // Pay for a specific chunk
+  const payForChunk = useCallback(async (chunkIndex: number, isAuto: boolean = false): Promise<boolean> => {
+    if (unlockedChunks.has(chunkIndex)) {
+      console.log(`✅ Chunk ${chunkIndex} already paid`);
+      return true;
+    }
+    
+    console.log(`💰 Paying for chunk ${chunkIndex} ${isAuto ? '(auto)' : '(manual)'}`);
+    
+    if (!isAuto) {
+      setPaymentStatus('pending');
+    }
+    
+    try {
+      let paymentDetails: PaymentDetails | null = null;
+      
+      try {
+        await videoAPI.requestChunkAccess(videoId, chunkIndex);
+        setUnlockedChunks(prev => new Set(prev).add(chunkIndex));
+        setLastPaidChunk(Math.max(lastPaidChunk, chunkIndex));
+        onPaymentSuccess?.(chunkIndex, formatUSDC(pricePerChunk));
+        return true;
+      } catch (err: any) {
+        if (err.response?.status === 402) {
+          paymentDetails = x402Utils.parsePaymentDetails(err.response);
+        } else if (err.response?.status === 200) {
+          setUnlockedChunks(prev => new Set(prev).add(chunkIndex));
+          setLastPaidChunk(Math.max(lastPaidChunk, chunkIndex));
+          return true;
+        } else {
+          throw err;
+        }
+      }
+
+      if (!paymentDetails) throw new Error('No payment details');
+
+      const signRes = await videoAPI.signChunk(videoId, chunkIndex, viewerWallet!);
+      const { signature, nonce } = signRes.data.data;
+      
+      // ✅ Use viewerDcw (DCW address) as payerAddress, NOT viewerWallet (EOA)
+      const signedPayment: SignedPayment = {
+        signature,
+        paymentDetails: { ...paymentDetails, nonce },
+        payerAddress: viewerDcw!,
+      };
+      
+      console.log('📝 Submitting signed payment:', {
+        signature: signature.slice(0, 20) + '...',
+        payerAddress: viewerDcw,
+        nonce,
+        price: paymentDetails.price,
+      });
+      
+      await videoAPI.requestChunkAccess(videoId, chunkIndex, signedPayment);
+      
+      setUnlockedChunks(prev => new Set(prev).add(chunkIndex));
+      setLastPaidChunk(Math.max(lastPaidChunk, chunkIndex));
+      onPaymentSuccess?.(chunkIndex, formatUSDC(pricePerChunk));
+      
+      return true;
+      
+    } catch (err: any) {
+      console.error('❌ Payment error for chunk', chunkIndex, err);
+      
+      if (err.response?.data?.error?.includes('Unique constraint') || 
+          err.message?.includes('Unique constraint')) {
+        setUnlockedChunks(prev => new Set(prev).add(chunkIndex));
+        setLastPaidChunk(Math.max(lastPaidChunk, chunkIndex));
+        return true;
+      }
+      
+      if (!isAuto) {
+        toast.error(`Failed to pay for chunk ${chunkIndex + 1}`);
+      }
+      onPaymentError?.(err.message);
+      return false;
+    } finally {
+      if (!isAuto) {
+        setPaymentStatus('idle');
+      }
+    }
+  }, [videoId, pricePerChunk, viewerWallet, viewerDcw, lastPaidChunk, unlockedChunks, onPaymentSuccess, onPaymentError]);
+
+  // Handle play/pause
+  const handlePlayPause = useCallback(() => {
+    if (!videoRef.current || !ready) {
+      toast.error('Video is still loading...');
+      return;
+    }
+    
+    if (playing) {
+      videoRef.current.pause();
+      setPlaying(false);
+      return;
+    }
+    
+    if (!unlockedChunks.has(currentChunk)) {
+      if (!viewerWallet || !viewerDcw) {
+        toast.error('Please connect your wallet to continue');
+        return;
+      }
+      setNeedsPayment(true);
+      initiatePayment();
+      return;
+    }
+    
+    videoRef.current.play().catch(err => {
+      console.error('Play error:', err);
+      toast.error('Failed to play video: ' + err.message);
+    });
+    setPlaying(true);
+    setNeedsPayment(false);
+  }, [playing, ready, currentChunk, unlockedChunks, viewerWallet, viewerDcw]);
+
+  // Handle time update
+  const handleTimeUpdate = useCallback(() => {
+    if (!videoRef.current || !mounted || isSeeking) return;
+    
+    const time = videoRef.current.currentTime;
+    setCurrentTime(time);
+    
+    const newChunk = Math.floor(time / chunkSeconds);
+    
+    if (newChunk !== currentChunk) {
+      console.log(`📊 Chunk changed: ${currentChunk} -> ${newChunk}`);
+      
+      if (!unlockedChunks.has(newChunk)) {
+        console.log(`⏸️ Hit unpaid chunk ${newChunk}, pausing`);
+        videoRef.current.pause();
+        setPlaying(false);
+        setCurrentChunk(newChunk);
+        setNeedsPayment(true);
+        return;
+      }
+      
+      setCurrentChunk(newChunk);
+    }
+    
+    if (time >= currentChunkEndTime - 0.3 && !unlockedChunks.has(currentChunk)) {
+      console.log(`⏸️ End of unpaid chunk ${currentChunk}`);
+      videoRef.current.pause();
+      setPlaying(false);
+      setNeedsPayment(true);
+    }
+  }, [chunkSeconds, currentChunk, currentChunkEndTime, unlockedChunks, mounted, isSeeking]);
+
+  // Initiate payment for current chunk
+  const initiatePayment = useCallback(async () => {
+    if (!viewerWallet || !viewerDcw) {
+      toast.error('Please connect your wallet to continue');
+      return;
+    }
+    
+    setNeedsPayment(false);
+    const success = await ensureChunksPaid(currentChunk);
+    
+    if (success) {
+      setPaymentStatus('success');
+      setNeedsPayment(false);
+      videoRef.current?.play();
+      setPlaying(true);
+      setTimeout(() => setPaymentStatus('idle'), 2000);
+    } else {
+      setPaymentStatus('error');
+      setNeedsPayment(true);
+    }
+  }, [viewerWallet, viewerDcw, currentChunk, ensureChunksPaid]);
+
+  // Handle seek
+  const handleSeek = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!videoRef.current) return;
+    
+    const newTime = parseFloat(e.target.value);
+    const newChunk = Math.floor(newTime / chunkSeconds);
+    
+    console.log(`🎯 Seeking to ${newTime}s, chunk ${newChunk}, paid: ${unlockedChunks.has(newChunk)}`);
+    
+    if (!unlockedChunks.has(newChunk) && newChunk > 0) {
+      toast.error(`Chunk ${newChunk + 1} is locked`);
+      return;
+    }
+    
+    setIsSeeking(true);
+    videoRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+    setCurrentChunk(newChunk);
+    
+    setAutoPayProcessedForChunk(prev => {
+      const next = new Set(prev);
+      next.delete(newChunk + 1);
+      return next;
+    });
+    
+    setTimeout(() => setIsSeeking(false), 200);
+  }, [chunkSeconds, unlockedChunks]);
+
+  const handleSeeking = useCallback(() => setIsSeeking(true), []);
+  
+  const handleSeeked = useCallback(() => {
+    if (!videoRef.current) return;
+    
+    const newTime = videoRef.current.currentTime;
+    const newChunk = Math.floor(newTime / chunkSeconds);
+    
+    console.log(`🎯 Seeked to ${newTime}s, chunk ${newChunk}`);
+    
+    if (!unlockedChunks.has(newChunk) && newChunk > 0) {
+      let lastPaid = 0;
+      for (let i = newChunk - 1; i >= 0; i--) {
+        if (unlockedChunks.has(i)) {
+          lastPaid = i;
+          break;
+        }
+      }
+      
+      const seekBackTime = (lastPaid + 1) * chunkSeconds - 0.1;
+      videoRef.current.currentTime = Math.max(0, seekBackTime);
+      setCurrentTime(seekBackTime);
+      setCurrentChunk(lastPaid);
+      toast.error('Cannot skip unpaid content');
+    } else {
+      setCurrentTime(newTime);
+      setCurrentChunk(newChunk);
+    }
+    
+    setIsSeeking(false);
+  }, [chunkSeconds, unlockedChunks]);
+
+  const handleLoadedData = () => {
+    console.log('✅ Video loaded');
+    setReady(true);
+    setIsLoading(false);
+  };
+
+  const handleCanPlay = () => {
+    console.log('✅ Video can play');
+    setReady(true);
+    setIsLoading(false);
+  };
+
+  const handleError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    const video = e.currentTarget;
+    const error = video.error;
+    
+    console.error('❌ Video error details:', { code: error?.code, message: error?.message });
+    
+    let errorMessage = 'Failed to load video';
+    if (error) {
+      switch (error.code) {
+        case 1: errorMessage = 'Video loading aborted'; break;
+        case 2: errorMessage = 'Network error'; break;
+        case 3: errorMessage = 'Video decoding failed'; break;
+        case 4: errorMessage = 'Video not found'; break;
+        default: errorMessage = `Video error: ${error.message}`;
+      }
+    }
+    
+    setVideoError(errorMessage);
+    setIsLoading(false);
+  };
+
+  const handleEnded = () => {
+    console.log('🏁 Video ended');
+    setPlaying(false);
+  };
+
+  const handleRetry = () => {
+    setVideoError(null);
+    setIsLoading(true);
+    setReady(false);
+    if (videoRef.current) videoRef.current.load();
+  };
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const progressPercent = (currentTime / durationSeconds) * 100;
+  const maxUnlockedTime = Math.min((lastPaidChunk + 1) * chunkSeconds, durationSeconds);
+
+  return (
+    <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
+      <video
+        ref={videoRef}
+        className="w-full h-full"
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedData={handleLoadedData}
+        onCanPlay={handleCanPlay}
+        onError={handleError}
+        onEnded={handleEnded}
+        onSeeking={handleSeeking}
+        onSeeked={handleSeeked}
+        playsInline
+        preload="auto"
+        crossOrigin="anonymous"
+      >
+        <source src={streamUrl} type="video/mp4" />
+      </video>
+      
+      {/* Loading overlay */}
+      {isLoading && !videoError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+          <div className="text-center">
+            <Loader2 className="animate-spin text-white mx-auto mb-2" size={48} />
+            <p className="text-white text-sm font-medium">Loading video...</p>
+          </div>
+        </div>
+      )}
+      
+      {/* Error overlay */}
+      {videoError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
+          <div className="text-center p-6">
+            <AlertCircle className="mx-auto mb-4 text-red-500" size={48} />
+            <p className="text-white mb-4">{videoError}</p>
+            <button onClick={handleRetry} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+              <RotateCcw size={16} className="inline mr-2" /> Retry
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* Regular payment overlay */}
+      {paymentStatus === 'pending' && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-30">
+          <div className="bg-gray-800 rounded-xl p-6 text-center">
+            <Loader2 className="animate-spin mx-auto mb-3 text-blue-500" size={32} />
+            <p className="text-white text-lg mb-1 font-medium">Processing Payment</p>
+            <p className="text-gray-400">{formatUSDC(pricePerChunk)} USDC</p>
+          </div>
+        </div>
+      )}
+      
+      {/* Auto-pay processing indicator */}
+      {isAutoPaying && (
+        <div className="absolute top-4 right-4 bg-amber-500/90 text-white px-3 py-1.5 rounded-full z-40 shadow-lg flex items-center gap-2">
+          <Loader2 className="animate-spin" size={14} />
+          <span className="text-xs font-medium">Auto-paying next chunk...</span>
+        </div>
+      )}
+      
+      {/* Locked chunk indicator */}
+      {needsPayment && !isCurrentChunkPaid && paymentStatus === 'idle' && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-4 py-2 rounded-lg z-20 shadow-lg flex items-center gap-2">
+          <Lock size={16} />
+          <span className="font-medium">Press play to unlock • {formatUSDC(pricePerChunk)} USDC</span>
+        </div>
+      )}
+      
+      {/* Controls overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+        {/* Progress bar */}
+        <div className="relative w-full h-2 bg-gray-600/80 rounded-full mb-3 overflow-hidden">
+          <div 
+            className="absolute h-full bg-green-500/40" 
+            style={{ width: `${(maxUnlockedTime / durationSeconds) * 100}%` }}
+          />
+          <div 
+            className="absolute h-full bg-blue-500 transition-all duration-300" 
+            style={{ width: `${progressPercent}%` }}
+          />
+          <input
+            type="range"
+            min={0}
+            max={durationSeconds}
+            value={currentTime}
+            onChange={handleSeek}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handlePlayPause}
+              disabled={!ready || paymentStatus === 'pending'}
+              className="w-12 h-12 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white disabled:opacity-50 transition shadow-lg"
+            >
+              {!ready || isLoading ? (
+                <Loader2 className="animate-spin" size={22} />
+              ) : playing ? (
+                <Pause size={24} />
+              ) : (
+                <Play size={24} />
+              )}
+            </button>
+            
+            <span className="text-sm text-white font-mono font-medium">
+              {formatTime(currentTime)} / {formatTime(durationSeconds)}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {/* Auto-Pay Toggle Button */}
+            <button
+              onClick={toggleAutoPay}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all shadow-lg ${
+                autoPayEnabled 
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600' 
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+              title={autoPayEnabled ? 'Auto-pay enabled - click to disable' : 'Auto-pay disabled - click to enable'}
+            >
+              {autoPayEnabled ? (
+                <>
+                  <Zap size={14} className="fill-current" />
+                  Auto On
+                </>
+              ) : (
+                <>
+                  <ZapOff size={14} />
+                  Auto Off
+                </>
+              )}
+            </button>
+            
+            <span className="text-xs text-gray-300 bg-black/30 px-2 py-1 rounded-full">
+              Chunk {currentChunk + 1}/{totalChunks} • {formatDuration(chunkSeconds)}
+            </span>
+          </div>
+        </div>
+        
+        {/* Chunk status indicators */}
+        <div className="flex gap-1 mt-3">
+          {Array.from({ length: Math.min(totalChunks, 30) }, (_, i) => (
+            <div
+              key={i}
+              className={`flex-1 h-1.5 rounded-full transition-all duration-200 cursor-pointer ${
+                unlockedChunks.has(i) 
+                  ? 'bg-green-500 hover:bg-green-400 shadow-sm shadow-green-500/50' 
+                  : i === currentChunk 
+                    ? 'bg-yellow-500 shadow-sm shadow-yellow-500/50' 
+                    : 'bg-gray-600 hover:bg-gray-500'
+              }`}
+              onClick={() => {
+                if (unlockedChunks.has(i) && videoRef.current) {
+                  videoRef.current.currentTime = i * chunkSeconds;
+                } else if (!unlockedChunks.has(i) && i > 0) {
+                  toast(`Chunk ${i + 1} is locked. Press play to unlock.`, {
+                    icon: '🔒',
+                  });
+                }
+              }}
+              title={`Chunk ${i + 1}: ${unlockedChunks.has(i) ? 'Unlocked' : 'Locked'}${!unlockedChunks.has(i) ? ` - ${formatUSDC(pricePerChunk)} USDC` : ''}`}
+            />
+          ))}
+          {totalChunks > 30 && (
+            <span className="text-xs text-gray-400 ml-1 bg-black/30 px-1.5 py-0.5 rounded-full">+{totalChunks - 30}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/WalletAuth.tsx">
+// frontend/src/components/WalletAuth.tsx
+'use client';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { SiweMessage } from 'siwe';
+import { getAddress } from 'viem';
+import { Wallet, Loader2, LogOut, Rocket, AlertCircle, CheckCircle, ExternalLink, RefreshCw } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { authAPI, walletAPI } from '@/lib/api';
+
+type DeployState = 'checking' | 'not_deployed' | 'deploying' | 'deployed' | 'error' | 'needs_funding';
+
+interface WalletState {
+  isDeployed: boolean;
+  balance: string;
+  needsFunding: boolean;
+  explorerUrl?: string;
+}
+
+export function useWallet() {
+  const [eoa, setEoa] = useState<string | null>(null);
+  const [dcwAddress, setDcwAddress] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [deployState, setDeployState] = useState<DeployState>('checking');
+  const [balance, setBalance] = useState<string>('0');
+  const [explorerUrl, setExplorerUrl] = useState<string>('');
+  const pollingInterval = useRef<NodeJS.Timeout | null>(null);
+
+  const checkDeployment = useCallback(async (dcw: string) => {
+    setDeployState('checking');
+    try {
+      const res = await walletAPI.getState(dcw);
+      const data = res.data.data;
+      const isDeployed = data?.isDeployed;
+      const currentBalance = data?.balance || '0';
+      const url = data?.explorerUrl || `https://testnet.arcscan.app/address/${dcw}`;
+      
+      setBalance(currentBalance);
+      setExplorerUrl(url);
+      
+      // Determine state based on deployment and balance
+      if (isDeployed === true) {
+        setDeployState('deployed');
+      } else {
+        const balanceNum = parseFloat(currentBalance);
+        if (balanceNum < 0.001) {
+          setDeployState('needs_funding');
+        } else {
+          setDeployState('not_deployed');
+        }
+      }
+    } catch (err: any) {
+      console.error('Check deployment error:', err);
+      setDeployState('error');
+    }
+  }, []);
+
+  const startPolling = useCallback((dcw: string) => {
+    if (pollingInterval.current) {
+      clearInterval(pollingInterval.current);
+    }
+    
+    let attempts = 0;
+    const maxAttempts = 30; // 60 seconds total
+    
+    pollingInterval.current = setInterval(async () => {
+      attempts++;
+      
+      try {
+        const res = await walletAPI.getState(dcw);
+        const data = res.data.data;
+        const isDeployed = data?.isDeployed;
+        const currentBalance = data?.balance || '0';
+        const url = data?.explorerUrl || `https://testnet.arcscan.app/address/${dcw}`;
+        
+        setBalance(currentBalance);
+        setExplorerUrl(url);
+        
+        if (isDeployed === true) {
+          setDeployState('deployed');
+          if (pollingInterval.current) {
+            clearInterval(pollingInterval.current);
+            pollingInterval.current = null;
+          }
+          toast.success('✅ Wallet deployed successfully!');
+          return;
+        }
+        
+        if (attempts >= maxAttempts) {
+          if (pollingInterval.current) {
+            clearInterval(pollingInterval.current);
+            pollingInterval.current = null;
+          }
+          const balanceNum = parseFloat(currentBalance);
+          if (balanceNum < 0.001) {
+            setDeployState('needs_funding');
+          } else {
+            setDeployState('not_deployed');
+          }
+          toast.error('Deployment taking longer than expected. Please check status.');
+        }
+      } catch {
+        // Ignore polling errors
+      }
+    }, 2000);
+    
+    // Cleanup after 70 seconds
+    setTimeout(() => {
+      if (pollingInterval.current) {
+        clearInterval(pollingInterval.current);
+        pollingInterval.current = null;
+      }
+    }, 70000);
+  }, []);
+
+  useEffect(() => {
+    const savedEoa = localStorage.getItem('arcstream_eoa');
+    const savedDcw = localStorage.getItem('arcstream_dcw');
+    if (savedEoa && savedDcw) { 
+      setEoa(savedEoa); 
+      setDcwAddress(savedDcw);
+      checkDeployment(savedDcw);
+    } else {
+      setDeployState('checking');
+    }
+    
+    return () => {
+      if (pollingInterval.current) {
+        clearInterval(pollingInterval.current);
+      }
+    };
+  }, [checkDeployment]);
+
+  const connectAndLink = useCallback(async () => {
+    setLoading(true);
+    try {
+      const provider = (window as any).ethereum;
+      if (!provider) throw new Error('Install MetaMask');
+
+      const accounts = await provider.request({ method: 'eth_requestAccounts' });
+      const mainEoa = getAddress(accounts[0]);
+
+      const nonceRes = await authAPI.getNonce(mainEoa);
+      const { nonce } = nonceRes.data.data;
+      const siweMessage = new SiweMessage({
+        domain: window.location.host,
+        address: mainEoa,
+        statement: 'Enable One-Click Viewing for ArcStream',
+        uri: window.location.origin,
+        version: '1',
+        chainId: 5042002,
+        nonce: nonce,
+      });
+
+      const messageText = siweMessage.prepareMessage();
+      const signature = await provider.request({ 
+        method: 'personal_sign', 
+        params: [messageText, mainEoa] 
+      });
+
+      const linkRes = await authAPI.linkWallet({ 
+        address: mainEoa, signature, nonce, message: messageText 
+      });
+
+      const { dcwAddress: linkedDcw } = linkRes.data.data;
+      setEoa(mainEoa);
+      setDcwAddress(linkedDcw);
+      
+      localStorage.setItem('arcstream_eoa', mainEoa);
+      localStorage.setItem('arcstream_dcw', linkedDcw);
+      
+      await checkDeployment(linkedDcw);
+      toast.success('Wallet connected!');
+    } catch (err: any) {
+      toast.error(err.message || 'Auth failed');
+    } finally {
+      setLoading(false);
+    }
+  }, [checkDeployment]);
+
+  const deployWallet = useCallback(async () => {
+    if (!dcwAddress) return;
+    setLoading(true);
+    setDeployState('deploying');
+    try {
+      const res = await walletAPI.deploy(dcwAddress);
+      const { onChainDeployed, txHash, explorerUrl: txExplorerUrl } = res.data.data || {};
+      
+      if (txExplorerUrl) {
+        setExplorerUrl(txExplorerUrl);
+      }
+      
+      if (onChainDeployed) {
+        setDeployState('deployed');
+        toast.success('✅ Wallet deployed successfully!');
+      } else {
+        toast.success('Deployment submitted. Waiting for confirmation...');
+        startPolling(dcwAddress);
+      }
+    } catch (err: any) {
+      const errorCode = err.response?.data?.error;
+      const errorMessage = err.response?.data?.message || err.message;
+      
+      if (errorCode === 'INSUFFICIENT_FUNDS' || errorCode === 'NEEDS_FUNDING') {
+        setDeployState('needs_funding');
+        toast.error('Wallet needs funding before deployment');
+      } else {
+        setDeployState('not_deployed');
+        toast.error(errorMessage || 'Deploy failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [dcwAddress, startPolling]);
+
+  const refreshState = useCallback(() => {
+    if (dcwAddress) {
+      checkDeployment(dcwAddress);
+    }
+  }, [dcwAddress, checkDeployment]);
+
+  const disconnect = () => {
+    if (pollingInterval.current) {
+      clearInterval(pollingInterval.current);
+      pollingInterval.current = null;
+    }
+    localStorage.removeItem('arcstream_eoa');
+    localStorage.removeItem('arcstream_dcw');
+    setEoa(null);
+    setDcwAddress(null);
+    setDeployState('checking');
+    setBalance('0');
+    setExplorerUrl('');
+    window.location.reload();
+  };
+
+  return { 
+    eoa, 
+    dcwAddress, 
+    loading, 
+    deployState, 
+    balance,
+    explorerUrl,
+    connectAndLink, 
+    deployWallet, 
+    refreshState,
+    disconnect 
+  };
+}
+
+export default function WalletAuth() {
+  const { 
+    eoa, 
+    dcwAddress, 
+    loading, 
+    deployState, 
+    balance,
+    explorerUrl,
+    connectAndLink, 
+    deployWallet, 
+    refreshState,
+    disconnect 
+  } = useWallet();
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        {eoa ? (
+          <div className="flex items-center gap-3 bg-white dark:bg-gray-900 border p-2 px-4 rounded-xl shadow-sm">
+            <div className="flex flex-col">
+               <span className="text-[10px] font-bold text-blue-500">WALLET CONNECTED</span>
+               <span className="text-xs font-mono">{dcwAddress?.slice(0,6)}...{dcwAddress?.slice(-4)}</span>
+            </div>
+            <button onClick={disconnect} className="p-1 hover:text-red-500 transition-colors">
+              <LogOut size={16}/>
+            </button>
+          </div>
+        ) : (
+          <button 
+            onClick={connectAndLink} 
+            disabled={loading} 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl flex items-center gap-2 transition-all disabled:opacity-50"
+          >
+            {loading ? <Loader2 className="animate-spin" size={18}/> : <Wallet size={18}/>}
+            Connect Wallet
+          </button>
+        )}
+      </div>
+
+      {/* Show deployment banner for various states */}
+      {eoa && dcwAddress && deployState !== 'deployed' && deployState !== 'checking' && (
+        <div className={`p-4 rounded-xl border ${
+          deployState === 'needs_funding' 
+            ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+            : deployState === 'deploying'
+            ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+            : deployState === 'error'
+            ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+            : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+        }`}>
+          <div className="flex items-start gap-3">
+            {deployState === 'deploying' ? (
+              <Loader2 className="text-blue-600 dark:text-blue-400 mt-0.5 animate-spin" size={20} />
+            ) : deployState === 'error' ? (
+              <AlertCircle className="text-red-600 dark:text-red-400 mt-0.5" size={20} />
+            ) : (
+              <AlertCircle className="text-amber-600 dark:text-amber-400 mt-0.5" size={20} />
+            )}
+            <div className="flex-1">
+              <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                {deployState === 'needs_funding' && '💰 Fund Your Wallet'}
+                {deployState === 'not_deployed' && '🚀 Deploy Your Wallet'}
+                {deployState === 'deploying' && '⏳ Deploying Wallet...'}
+                {deployState === 'error' && '❌ Deployment Error'}
+              </h4>
+              
+              <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
+                {deployState === 'needs_funding' && (
+                  <>Your Circle wallet needs testnet USDC before it can be deployed. Current balance: {parseFloat(balance).toFixed(6)} USDC</>
+                )}
+                {deployState === 'not_deployed' && (
+                  <>Your wallet has {parseFloat(balance).toFixed(6)} USDC and is ready to be deployed on-chain.</>
+                )}
+                {deployState === 'deploying' && (
+                  <>Deployment transaction in progress. This usually takes 30-60 seconds.</>
+                )}
+                {deployState === 'error' && (
+                  <>Failed to check deployment status. Click refresh to retry.</>
+                )}
+              </p>
+              
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 mb-3">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Your DCW Address:</p>
+                  <button
+                    onClick={refreshState}
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                    title="Refresh status"
+                  >
+                    <RefreshCw size={12} className="text-gray-500" />
+                  </button>
+                </div>
+                <code className="text-xs font-mono text-gray-900 dark:text-gray-100 break-all block mb-2">
+                  {dcwAddress}
+                </code>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Balance:</span>
+                  <span className="text-xs font-mono font-medium">
+                    {parseFloat(balance).toFixed(6)} USDC
+                  </span>
+                </div>
+                {explorerUrl && (
+                  <a
+                    href={explorerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                  >
+                    View on ArcScan <ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
+
+              <div className="flex gap-2">
+                {deployState === 'needs_funding' && (
+                  <>
+                    <a 
+                      href="https://faucet.circle.com" 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 text-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition flex items-center justify-center gap-1"
+                    >
+                      Get Testnet USDC
+                      <ExternalLink size={12} />
+                    </a>
+                    <button
+                      onClick={refreshState}
+                      className="px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-medium transition"
+                    >
+                      Check Balance
+                    </button>
+                  </>
+                )}
+                
+                {deployState === 'not_deployed' && (
+                  <button
+                    onClick={deployWallet}
+                    disabled={loading}
+                    className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-medium transition disabled:opacity-50 flex items-center justify-center gap-1"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="animate-spin" size={12} />
+                        Deploying...
+                      </>
+                    ) : (
+                      <>
+                        <Rocket size={12} />
+                        Deploy Wallet
+                      </>
+                    )}
+                  </button>
+                )}
+                
+                {deployState === 'deploying' && (
+                  <div className="flex-1 text-center px-3 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium">
+                    Deployment in progress...
+                  </div>
+                )}
+                
+                {deployState === 'error' && (
+                  <button
+                    onClick={refreshState}
+                    className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-medium transition flex items-center justify-center gap-1"
+                  >
+                    <RefreshCw size={12} />
+                    Retry
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success state */}
+      {eoa && deployState === 'deployed' && (
+        <div className="flex items-center gap-2 text-green-600 dark:text-green-400 text-xs bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
+          <CheckCircle size={14} />
+          <span className="flex-1">Wallet deployed & ready for seamless payments</span>
+          <span className="font-mono">{parseFloat(balance).toFixed(4)} USDC</span>
+          {explorerUrl && (
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+            >
+              <ExternalLink size={12} />
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+</file>
+
+<file path="src/config/app.ts">
+// frontend/src/config/app.ts
+
+export type AppConfig = {
+  apiUrl: string;
+  appUrl: string;
+  circle: {
+    chain: 'ARC-TESTNET' | 'ARC-MAINNET';
+    chainId: number;
+    usdcContract: string;
+    rpcUrl: string;
+    facilitatorUrl: string;
+  };
+  pricing: {
+    minChunkSeconds: number;
+    maxChunkSeconds: number;
+    defaultChunkSeconds: number;
+    maxPricePerChunk: number;
+  };
+  ui: {
+    balanceRefreshInterval: number;
+    paymentRetryDelay: number;
+  };
+};
+
+export const appConfig: AppConfig = {
+  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
+  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  circle: {
+    chain: 'ARC-TESTNET',
+    chainId: 5042002,
+    usdcContract: process.env.NEXT_PUBLIC_USDC_CONTRACT || '0x3600000000000000000000000000000000000000',
+    rpcUrl: process.env.NEXT_PUBLIC_ARC_RPC_URL || 'https://rpc.testnet.arc.network',
+    facilitatorUrl: process.env.NEXT_PUBLIC_X402_FACILITATOR || 'https://facilitator.x402.org'
+  },
+  pricing: {
+    minChunkSeconds: 5,
+    maxChunkSeconds: 3600,
+    defaultChunkSeconds: 300, // 5 minutes default
+    maxPricePerChunk: 0.01
+  },
+  ui: {
+    balanceRefreshInterval: 15000,
+    paymentRetryDelay: 2000
+  }
+} as const;
+
+export const formatUSDC = (amount: number | string): string => {
+  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+  return num.toFixed(6);
+};
+
+export const formatDuration = (seconds: number): string => {
+  if (seconds >= 60) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (secs === 0) {
+      return `${mins} min${mins !== 1 ? 's' : ''}`;
+    }
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+  return `${seconds} sec${seconds !== 1 ? 's' : ''}`;
+};
+
+export const calculateVideoChunks = (
+  durationSeconds: number, 
+  chunkDurationSeconds: number
+): { chunkSeconds: number; totalChunks: number } => {
+  const totalChunks = Math.ceil(durationSeconds / chunkDurationSeconds);
+  return { chunkSeconds: chunkDurationSeconds, totalChunks };
+};
+
+export default appConfig;
+</file>
+
+<file path="src/lib/api.ts">
+// frontend/src/lib/api.ts
+import axios, { AxiosInstance } from 'axios';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+export const api: AxiosInstance = axios.create({
+  baseURL: API_BASE,
+  timeout: 120000, // Increased to 120s for video upload processing
+});
+
+export interface PaymentDetails {
+  resource: string;
+  price: string;
+  currency: 'USDC';
+  chain: 'ARC-TESTNET';
+  nonce: string;
+  maxAmountRequired: string;
+  recipient: string;
+  facilitator?: string;
+}
+
+export interface SignedPayment {
+  signature: string;
+  paymentDetails: PaymentDetails;
+  payerAddress: string;
+}
+
+export const authAPI = {
+  getNonce: (address: string) => api.get(`/auth/nonce?address=${address}`),
+  linkWallet: (data: any) => api.post('/auth/link', data),
+};
+
+export const walletAPI = {
+  getState: (address: string) => api.get(`/wallets/${address}/state`),
+  deploy: (address: string) => api.post('/wallets/deploy', { address }),
+};
+
+export const videoAPI = {
+  list: (q?: string) => api.get(`/videos${q ? `?q=${q}` : ''}`),
+  
+  getVideo: (id: string) => api.get(`/videos/${id}`),
+  
+  create: (payload: FormData | Record<string, any>, eoaAddress: string) => {
+    const isFormData = payload instanceof FormData;
+    
+    return api.post('/videos', payload, {
+      headers: { 
+        Authorization: `Bearer ${eoaAddress}`,
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' })
+      },
+      timeout: 180000, // 3 minutes
+    });
+  },
+  
+  delete: (videoId: string, eoaAddress: string) =>
+    api.delete(`/videos/${videoId}`, {
+      headers: { Authorization: `Bearer ${eoaAddress}` }
+    }),
+  
+  signChunk: (videoId: string, chunkIndex: number, eoaAddress: string) => 
+    api.post(`/videos/${videoId}/sign/${chunkIndex}`, {}, {
+      headers: { Authorization: `Bearer ${eoaAddress}` }
+    }),
+  
+  requestChunkAccess: (videoId: string, chunkIndex: number, signedPayment?: SignedPayment) => {
+    const headers: Record<string, string> = {};
+    if (signedPayment) {
+      // ✅ Include the signature AND payer address in the auth header
+      headers['X-Payment-Authorization'] = `${signedPayment.signature}:${signedPayment.payerAddress}`;
+      headers['X-Payment-Nonce'] = signedPayment.paymentDetails.nonce;
+      headers['X-Payment-Price'] = signedPayment.paymentDetails.price;
+      headers['X-Creator-Wallet'] = signedPayment.paymentDetails.recipient;
+    }
+    return api.post(`/videos/${videoId}/stream/${chunkIndex}`, {}, { headers });
+  },
+  
+  getPaidChunks: (videoId: string, eoaAddress: string) =>
+    api.get(`/videos/${videoId}/paid-chunks`, {
+      headers: { Authorization: `Bearer ${eoaAddress}` }
+    }),
+
+
+      getUploadToken: (filename: string, contentType: string, eoaAddress: string) =>
+    api.post('/videos/upload-token', { filename, contentType }, {
+      headers: { Authorization: `Bearer ${eoaAddress}` }
+    }),
+
+  // Confirm upload and create video record
+  confirmUpload: (data: {
+    videoUrl: string;
+    title: string;
+    description: string;
+    durationSeconds: string;
+    chunkUnit: string;
+    chunkValue: string;
+    pricePerChunk: string;
+  }, eoaAddress: string) =>
+    api.post('/videos/confirm-upload', data, {
+      headers: { Authorization: `Bearer ${eoaAddress}` }
+    }),
+};
+
+export const x402Utils = {
+  parsePaymentDetails: (response: any): PaymentDetails | null => {
+    const headers = response?.headers || {};
+    const body = response?.data || {};
+    const details = body.paymentDetails || body || {};
+    
+    if (headers['x-payment-required'] !== 'true' && response?.status !== 402) return null;
+    
+    return {
+      resource: headers['x-payment-resource'] || details.resource || '',
+      price: headers['x-payment-price'] || details.price || '0.001',
+      currency: 'USDC',
+      chain: 'ARC-TESTNET',
+      nonce: headers['x-payment-nonce'] || details.nonce || '',
+      maxAmountRequired: headers['x-payment-max-amount'] || details.maxAmountRequired || headers['x-payment-price'] || '0.001',
+      recipient: headers['x-creator-wallet'] || details.recipient || '',
+      facilitator: headers['x-payment-facilitator'] || details.facilitator || 'https://facilitator.x402.org',
+    };
+  },
+};
+
+// Request interceptor for debugging
+api.interceptors.request.use(
+  (config) => {
+    console.log(`📤 ${config.method?.toUpperCase()} ${config.url}`, 
+      config.data instanceof FormData ? '[FormData]' : config.data);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor for debugging
+api.interceptors.response.use(
+  (response) => {
+    console.log(`📥 ${response.status} ${response.config.url}`);
+    return response;
+  },
+  (error) => {
+    console.error(`❌ API Error:`, error.response?.status, error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+</file>
+
+<file path="tsc_output_2.txt">
+
+</file>
+
+<file path="tsc_output.txt">
+src/components/VideoPlayer.tsx(6,28): error TS2614: Module '"react-player"' has no exported member 'ReactPlayerProps'. Did you mean to use 'import ReactPlayerProps from "react-player"' instead?
+src/components/VideoPlayer.tsx(24,23): error TS2749: 'ReactPlayer' refers to a value, but is being used as a type here. Did you mean 'typeof ReactPlayer'?
+src/components/VideoPlayer.tsx(190,11): error TS2322: Type '(progress: { playedSeconds: number; }) => void' is not assignable to type 'ReactEventHandler<HTMLVideoElement>'.
+  Types of parameters 'progress' and 'event' are incompatible.
+    Property 'playedSeconds' is missing in type 'SyntheticEvent<HTMLVideoElement, Event>' but required in type '{ playedSeconds: number; }'.
+src/components/WalletAuth.tsx(80,11): error TS2339: Property 'info' does not exist on type '{ (message: Message, opts?: Partial<Pick<Toast, "className" | "id" | "icon" | "duration" | "ariaProps" | "style" | "position" | "iconTheme" | "toasterId" | "removeDelay">> | undefined): string; ... 8 more ...; promise<T>(promise: Promise<...> | (() => Promise<...>), msgs: { ...; }, opts?: DefaultToastOptions | undef...'.
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}
+</file>
+
+<file path="vercel.json">
+{
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "outputDirectory": ".next"
+}
+</file>
+
+</files>
