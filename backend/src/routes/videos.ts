@@ -9,36 +9,26 @@ import { getTransactionStats } from '../utils/transactionLogger';
 import { prisma } from '../lib/prisma';
 import { Readable } from 'stream';
 import { signPaymentWithCircle } from '../services/nanopaymentsService';
-import { v2 as cloudinary } from 'cloudinary';
+import { put, del } from '@vercel/blob';
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
 
 const router = express.Router();
 
-// --- Cloudinary Configuration ---
-console.log('🔧 Configuring Cloudinary...');
-console.log('   CLOUDINARY_CLOUD_NAME:', process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'MISSING');
-console.log('   CLOUDINARY_API_KEY:', process.env.CLOUDINARY_API_KEY ? 'SET' : 'MISSING');
-console.log('   CLOUDINARY_API_SECRET:', process.env.CLOUDINARY_API_SECRET ? 'SET' : 'MISSING');
+// --- Vercel Blob Configuration ---
+console.log('🔧 Configuring Vercel Blob...');
+console.log('   BLOB_READ_WRITE_TOKEN:', process.env.BLOB_READ_WRITE_TOKEN ? 'SET' : 'MISSING');
 
-if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-  cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true 
-  });
-  console.log('✅ Cloudinary configured successfully');
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  console.warn('⚠️ BLOB_READ_WRITE_TOKEN missing - uploads will fail');
 } else {
-  console.warn('⚠️ Cloudinary configuration incomplete - uploads will fail');
+  console.log('✅ Vercel Blob configured successfully');
 }
 
 // Multer setup
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage,
-  limits: { fileSize: 100 * 1024 * 1024 } // 100MB
+  limits: { fileSize: 5 * 1024 * 1024 * 1024 } // 5GB limit with Vercel Blob!
 });
 
 // 🔒 Production-safe parameter extractor
@@ -63,17 +53,14 @@ const getAuthenticatedUser = (req: Request) => {
 
 // --- ROUTES ---
 
-// 1. POST /api/videos - Create new video with Cloudinary Upload
+// 1. POST /api/videos - Create new video with Vercel Blob Upload
 router.post('/', upload.single('video'), async (req: Request, res: Response) => {
   console.log('\n📤 ====== UPLOAD REQUEST RECEIVED ======');
-  console.log('Headers:', JSON.stringify(req.headers, null, 2));
   console.log('File object:', req.file ? {
-    fieldname: req.file.fieldname,
     originalname: req.file.originalname,
-    encoding: req.file.encoding,
     mimetype: req.file.mimetype,
     size: req.file.size,
-    buffer: req.file.buffer ? `Buffer(${req.file.buffer.length} bytes)` : 'MISSING'
+    sizeMB: (req.file.size / (1024 * 1024)).toFixed(2) + ' MB'
   } : 'MISSING');
   console.log('Body keys:', Object.keys(req.body));
   console.log('==========================================\n');
@@ -99,44 +86,31 @@ router.post('/', upload.single('video'), async (req: Request, res: Response) => 
     const { title, description, durationSeconds, chunkUnit, chunkValue, pricePerChunk } = req.body;
     console.log('📝 Form data:', { title, description, durationSeconds, chunkUnit, chunkValue, pricePerChunk });
 
-    // Check Cloudinary configuration
-    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-      console.error('❌ Cloudinary configuration missing');
+    // Check Vercel Blob token
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      console.error('❌ BLOB_READ_WRITE_TOKEN missing');
       return res.status(500).json({ 
-        error: 'Server configuration error: Cloudinary not set up. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables.' 
+        error: 'Server configuration error: Blob storage not set up. Please set BLOB_READ_WRITE_TOKEN environment variable.' 
       });
     }
 
-    // Upload to Cloudinary
-    console.log('☁️ Starting Cloudinary upload...');
-    const uploadPromise = new Promise<any>((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        { 
-          resource_type: "video", 
-          folder: "arcstream",
-          timeout: 120000,
-        },
-        (error, result) => {
-          if (error) {
-            console.error('❌ Cloudinary upload error:', error);
-            reject(error);
-          } else {
-            console.log('✅ Cloudinary upload success:', result.secure_url);
-            resolve(result);
-          }
-        }
-      );
-      
-      // Write buffer to stream
-      const bufferStream = new Readable();
-      bufferStream.push(req.file!.buffer);
-      bufferStream.push(null);
-      bufferStream.pipe(uploadStream);
+    // ✅ Upload to Vercel Blob
+    const timestamp = Date.now();
+    const safeFilename = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const blobPath = `videos/${timestamp}-${safeFilename}`;
+    
+    console.log('☁️ Uploading to Vercel Blob...');
+    console.log('   Path:', blobPath);
+    console.log('   Size:', (req.file.size / (1024 * 1024)).toFixed(2), 'MB');
+    
+    const blob = await put(blobPath, req.file.buffer, {
+      access: 'public',
+      contentType: req.file.mimetype,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
-    const cloudinaryResult = await uploadPromise;
-    const videoUrl = cloudinaryResult.secure_url;
-    console.log('📹 Cloudinary URL:', videoUrl);
+    const videoUrl = blob.url;
+    console.log('✅ Vercel Blob upload success:', videoUrl);
 
     // Calculate chunk duration
     let chunkDurationSeconds: number;
@@ -145,6 +119,14 @@ router.post('/', upload.single('video'), async (req: Request, res: Response) => 
       chunkDurationSeconds = Math.round(value * 60);
     } else {
       chunkDurationSeconds = Math.round(value);
+    }
+
+    // Validate chunk duration
+    if (chunkDurationSeconds < 5) {
+      return res.status(400).json({ error: 'Chunk duration must be at least 5 seconds' });
+    }
+    if (chunkDurationSeconds > 3600) {
+      return res.status(400).json({ error: 'Chunk duration cannot exceed 60 minutes' });
     }
 
     // Find User in DB
@@ -183,18 +165,15 @@ router.post('/', upload.single('video'), async (req: Request, res: Response) => 
   }
 });
 
-// Test endpoint for Cloudinary
-router.get('/test-cloudinary', async (req: Request, res: Response) => {
+// Test endpoint for Vercel Blob
+router.get('/test-blob', async (req: Request, res: Response) => {
   try {
-    const pingResult = await cloudinary.api.ping();
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
     res.json({ 
       success: true, 
-      message: 'Cloudinary connected',
-      ping: pingResult,
+      message: 'Vercel Blob check',
       config: {
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'MISSING',
-        api_key: process.env.CLOUDINARY_API_KEY ? 'SET' : 'MISSING',
-        api_secret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'MISSING',
+        token: token ? 'SET (starts with ' + token.substring(0, 15) + '...)' : 'MISSING',
       }
     });
   } catch (err: any) {
@@ -202,9 +181,7 @@ router.get('/test-cloudinary', async (req: Request, res: Response) => {
       success: false, 
       error: err.message,
       config: {
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'MISSING',
-        api_key: process.env.CLOUDINARY_API_KEY ? 'SET' : 'MISSING',
-        api_secret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'MISSING',
+        token: process.env.BLOB_READ_WRITE_TOKEN ? 'SET' : 'MISSING',
       }
     });
   }
@@ -238,7 +215,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   res.json({ success: true, data: video });
 });
 
-// 4. GET /api/videos/:id/stream - Stream video (Cloudinary Proxy)
+// 4. GET /api/videos/:id/stream - Stream video (Vercel Blob Proxy)
 router.get('/:id/stream', async (req: Request, res: Response) => {
   const videoId = getRouteParam(req.params.id);
   const video = await getVideoById(videoId!);
@@ -267,7 +244,7 @@ router.get('/:id/stream', async (req: Request, res: Response) => {
         res.end();
       }
     } else {
-      res.status(response.status).json({ error: 'Failed to fetch remote video' });
+      res.status(response.status).json({ error: 'Failed to fetch video' });
     }
   } catch (err: any) {
     res.status(502).json({ error: 'Stream proxy failed', details: err.message });
@@ -286,6 +263,16 @@ router.delete('/:id', async (req: Request, res: Response) => {
     
     if (video.creatorAddress.toLowerCase() !== authenticatedUser.eoaAddress.toLowerCase()) {
       return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    // Optional: Delete from Vercel Blob
+    try {
+      if (process.env.BLOB_READ_WRITE_TOKEN) {
+        await del(video.videoUrl, { token: process.env.BLOB_READ_WRITE_TOKEN });
+        console.log('🗑️ Deleted from Vercel Blob:', video.videoUrl);
+      }
+    } catch (blobErr) {
+      console.warn('⚠️ Could not delete from Vercel Blob:', blobErr);
     }
 
     await prisma.payment.deleteMany({ where: { videoId: videoId } });

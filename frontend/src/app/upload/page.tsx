@@ -19,6 +19,9 @@ interface UploadForm {
   pricePerChunk: string;
 }
 
+// ✅ Updated to 5GB for Vercel Blob
+const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5GB
+
 export default function UploadPage() {
   const { eoa: eoaAddress, dcwAddress } = useWallet();
   const router = useRouter();
@@ -44,9 +47,9 @@ export default function UploadPage() {
   };
 
   const processFile = (file: File) => {
-    // Check file size (100MB limit)
-    if (file.size > 100 * 1024 * 1024) {
-      toast.error('File size must be less than 100MB');
+    // Check file size (5GB limit with Vercel Blob)
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error(`File size must be less than 5GB`);
       return;
     }
     
@@ -67,7 +70,8 @@ export default function UploadPage() {
     };
     video.src = URL.createObjectURL(file);
     
-    toast.success(`✅ Selected: ${file.name}`);
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    toast.success(`✅ Selected: ${file.name} (${sizeMB} MB)`);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -111,10 +115,11 @@ export default function UploadPage() {
     }
 
     setSubmitting(true);
-    const loadingToast = toast.loading('Uploading to Cloudinary... This may take a minute.');
+    const sizeMB = (videoFile.size / (1024 * 1024)).toFixed(2);
+    const loadingToast = toast.loading(`Uploading to Vercel Blob (${sizeMB} MB)...`);
 
     try {
-      // ✅ Create FormData with the actual file
+      // Create FormData with the actual file
       const formData = new FormData();
       formData.append('video', videoFile);
       formData.append('title', form.title);
@@ -155,6 +160,8 @@ export default function UploadPage() {
   const totalCost = totalChunks * parseFloat(form.pricePerChunk || '0.001');
   const isValidChunk = chunkSeconds >= 5 && chunkSeconds <= 3600 && chunkSeconds <= (durationSec || Infinity);
 
+  const fileSizeMB = videoFile ? (videoFile.size / (1024 * 1024)).toFixed(2) : '0';
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
       <div className="max-w-2xl mx-auto">
@@ -182,7 +189,7 @@ export default function UploadPage() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                onClick={() => document.getElementById('video-file')?.click()}
+                onClick={() => !submitting && document.getElementById('video-file')?.click()}
               >
                 <input
                   type="file"
@@ -190,18 +197,19 @@ export default function UploadPage() {
                   onChange={handleFileChange}
                   className="hidden"
                   id="video-file"
+                  disabled={submitting}
                 />
                 <FileVideo size={48} className={`mx-auto mb-3 ${videoFile ? 'text-green-500' : 'text-gray-400'}`} />
                 <p className="text-gray-700 dark:text-gray-200 font-medium">
                   {videoFile ? videoFile.name : 'Click or drag video here'}
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
-                  MP4, MOV, or WebM (Max 100MB)
+                  MP4, MOV, or WebM (Up to 5GB with Vercel Blob)
                 </p>
               </div>
-              {videoFile && (
+              {videoFile && !submitting && (
                 <div className="flex justify-between text-xs text-blue-600 dark:text-blue-400 px-1 mt-2">
-                  <span>Size: {(videoFile.size / (1024 * 1024)).toFixed(2)} MB</span>
+                  <span>Size: {fileSizeMB} MB</span>
                   {videoDuration && <span>Duration: {formatDuration(videoDuration)}</span>}
                 </div>
               )}
@@ -216,7 +224,8 @@ export default function UploadPage() {
                 value={form.title} 
                 onChange={handleChange} 
                 placeholder="My Awesome Video"
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" 
+                disabled={submitting}
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
               />
             </div>
 
@@ -230,7 +239,8 @@ export default function UploadPage() {
                 onChange={handleChange} 
                 rows={3} 
                 placeholder="Tell viewers about your content..."
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" 
+                disabled={submitting}
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
               />
             </div>
 
@@ -245,7 +255,8 @@ export default function UploadPage() {
                   value={form.durationSeconds} 
                   onChange={handleChange} 
                   min="1"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" 
+                  disabled={submitting}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
                 />
               </div>
               <div>
@@ -262,7 +273,8 @@ export default function UploadPage() {
                   onChange={handleChange} 
                   min="0.000001"
                   max="0.01"
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" 
+                  disabled={submitting}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
                 />
               </div>
             </div>
@@ -279,13 +291,15 @@ export default function UploadPage() {
                   value={form.chunkValue} 
                   onChange={handleChange} 
                   min="1"
-                  className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500" 
+                  disabled={submitting}
+                  className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" 
                 />
                 <select 
                   name="chunkUnit" 
                   value={form.chunkUnit} 
                   onChange={handleChange} 
-                  className="w-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={submitting}
+                  className="w-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 >
                   <option value="seconds">Seconds</option>
                   <option value="minutes">Minutes</option>
@@ -315,7 +329,7 @@ export default function UploadPage() {
               {submitting ? (
                 <>
                   <Loader2 size={20} className="animate-spin" />
-                  Uploading to Cloudinary...
+                  Uploading to Vercel Blob...
                 </>
               ) : (
                 '🚀 Publish to ArcStream'
@@ -326,8 +340,9 @@ export default function UploadPage() {
         
         {/* Tips */}
         <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
-          <h3 className="font-medium text-blue-900 dark:text-blue-200 mb-2">💡 Chunking Tips</h3>
+          <h3 className="font-medium text-blue-900 dark:text-blue-200 mb-2">💡 Upload Tips</h3>
           <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+            <li>• Maximum file size: 5GB (Vercel Blob)</li>
             <li>• Minimum chunk: 5 seconds</li>
             <li>• Maximum chunk: 60 minutes (3600 seconds)</li>
             <li>• Shorter chunks = more granular payments</li>
